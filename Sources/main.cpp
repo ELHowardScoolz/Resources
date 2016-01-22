@@ -210,65 +210,65 @@ int main(int argc, char* argv[]) {
     	    	break; //end instructions case
 
     	case PLAYERS1:
-    	    	    		players1 = true;
-    	    	    		cout << "The GameState is 1 Player Game" << endl;
-    	    	    		cout << "Press the A button for Win screen" << endl;
-    	    	    		cout << "Press the B button for Lose screen" << endl;
-    	    	    		cout << endl;
+     	    		players1 = true;
+ 	   	    		cout << "The GameState is 1 Player Game" << endl;
+   	   	    		cout << "Press the A button for Win screen" << endl;
+   	   	    		cout << "Press the B button for Lose screen" << endl;
+   	   	    		cout << endl;
 
-    	    	    		while (players1)
-    	    	    		{
-    	    	    			//check for input events
-    	    	    			if (SDL_PollEvent(&event))
-    	    	    			{
-    	    	    				//check to see if the SDL Window is closed - player clicks X in window
-    	    	    				if(event.type == SDL_QUIT)
-    	    	    				{
-    	    	    					quit = true;
-    	    	    					players1 = false;
-    	    	    					break;
-    	    	    				}
+   	   	    		while (players1)
+   	   	    		{
+   	   	    			//check for input events
+   	   	    			if (SDL_PollEvent(&event))
+   	   	    			{
+   	   	    				//check to see if the SDL Window is closed - player clicks X in window
+   	   	    				if(event.type == SDL_QUIT)
+   	   	    				{
+   	   	    					quit = true;
+   	   	    					players1 = false;
+   	   	    					break;
+   	   	    				}
 
-    	    	    				switch (event.type)
-    	    	    				{
-    	    	    				case SDL_CONTROLLERBUTTONDOWN:
-    	    	    					if (event.cdevice.which == 0)
+        	    				switch (event.type)
+        	    				{
+        	    				case SDL_CONTROLLERBUTTONDOWN:
+        	    					if (event.cdevice.which == 0)
 
-    	    	    					{
-    	    	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-    	    	    						{
-    	    	    							players1 = false;
-    	    	    							gameState = WIN;
-    	    	    						}
+        	    					{
+        	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+        	    						{
+        	    							players1 = false;
+        	    							gameState = WIN;
+        	    						}
 
-    	    	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-    	    	    						{
-    	    	    						    players1 = false;
-    	    	    						    gameState = LOSE;
-    	    	    						}
+        	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+        	    						{
+        	    						    players1 = false;
+        	    						    gameState = LOSE;
+        	    						}
 
-    	    	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_Y)
-    	    	    						{
-    	    	    						    players1 = false;
-    	    	    						    quit = true;
-    	    	    						}
-    	    	    					}
-    	    	    					break;
-    	    	    				}
-    	    	    			}
-    	    	    		}
-    	    	    		break; //end players1 case
+        	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_Y)
+        	    						{
+        	    						    players1 = false;
+        	    						    quit = true;
+        	    						}
+        	    					}
+        	    					break;
+        	    				}
+        	    			}
+        	    		}
+        	    		break; //end players1 case
 
     	case PLAYERS2:
-    	    	    	    		players2 = true;
-    	    	    	    		cout << "The GameState is 2 Player Game" << endl;
-    	    	    	    		cout << "Press the A button for Win screen" << endl;
-    	    	    	    		cout << "Press the B button for Lose screen" << endl;
-    	    	    	    		cout << endl;
+ 	     	    		players2 = true;
+         	    		cout << "The GameState is 2 Player Game" << endl;
+         	    		cout << "Press the A button for Win screen" << endl;
+         	    		cout << "Press the B button for Lose screen" << endl;
+         	    		cout << endl;
 
-    	    	    	    		while (players2)
-    	    	    	    		{
-    	    	    	    			//check for input events
+    	   	    		while (players2)
+    	   	    		{
+    	    			//check for input events
     	    	    	    			if (SDL_PollEvent(&event))
     	    	    	    			{
     	    	    	    				//check to see if the SDL Window is closed - player clicks X in window
