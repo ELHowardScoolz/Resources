@@ -101,9 +101,6 @@ int main(int argc, char* argv[]) {
 	//create a string linking to the mac's images folder
 	string s_cwd_images = s_cwd + "\\Resources\\Images\\";
 
-	//test
-	//cout << s_cwd_images << endl;
-
 #endif
 
 #if defined(__linux__)
@@ -114,7 +111,7 @@ int main(int argc, char* argv[]) {
 	string s_cwd(getcwd(NULL, 0));
 
 	//create a string linking to the mac's images folder
-	string s_cwd_images = s_cwd + "\\Resources\\Images\\";
+	string s_cwd_images = s_cwd + "/Resources/Images";
 
 #endif
 
@@ -222,8 +219,8 @@ int main(int argc, char* argv[]) {
 
   Play1Pos.x = 200;
   Play1Pos.y = 200;
-  Play1Pos.w = 648;
-  Play1Pos.h = 144;
+  Play1Pos.w = 600;
+  Play1Pos.h = 100;
 
    //********MAke 2 Player***********
   string Play2path = s_cwd_images + "/Player2.png";
@@ -237,94 +234,94 @@ int main(int argc, char* argv[]) {
     SDL_Rect Play2Pos;
 
     Play2Pos.x = 200;
-    Play2Pos.y = 370;
-    Play2Pos.w = 648;
-    Play2Pos.h = 144;
+    Play2Pos.y = 330;
+    Play2Pos.w = 600;
+    Play2Pos.h = 100;
 
-	////********MAke 1 PlayerOff***********
-	//string Play1offpath = s_cwd_images + "/Player1off.png";
+	//********MAke 1 PlayerOff***********
+	string Play1offpath = s_cwd_images + "/Player1off.png";
 
-	//surface = IMG_Load(Play1offpath.c_str());
+	surface = IMG_Load(Play1offpath.c_str());
 
-	//SDL_Texture *Play1off;
+	SDL_Texture *Play1off;
 
-	//Play1 = SDL_CreateTextureFromSurface(renderer, surface);
+	Play1off = SDL_CreateTextureFromSurface(renderer, surface);
 
-	//SDL_Rect Play1offPos;
+	SDL_Rect Play1offPos;
 
-	//Play1offPos.x = 200;
-	//Play1offPos.y = 200;
-	//Play1offPos.w = 648;
-	//Play1offPos.h = 144;
+	Play1offPos.x = 200;
+	Play1offPos.y = 200;
+	Play1offPos.w = 600;
+	Play1offPos.h = 100;
 
-	////********MAke 2 PlayerOff***********
-	//string Play2offpath = s_cwd_images + "/Player2off.png";
+	//********MAke 2 PlayerOff***********
+	string Play2offpath = s_cwd_images + "/Player2off.png";
 
-	//surface = IMG_Load(Play2offpath.c_str());
+	surface = IMG_Load(Play2offpath.c_str());
 
-	//SDL_Texture *Play2;
+	SDL_Texture *Play2off;
 
-	//Play2 = SDL_CreateTextureFromSurface(renderer, surface);
+	Play2off = SDL_CreateTextureFromSurface(renderer, surface);
 
-	//SDL_Rect Play2offPos;
+	SDL_Rect Play2offPos;
 
-	//Play2offPos.x = 200;
-	//Play2offPos.y = 370;
-	//Play2offPos.w = 648;
-	//Play2offPos.h = 144;
+	Play2offPos.x = 200;
+	Play2offPos.y = 370;
+	Play2offPos.w = 600;
+	Play2offPos.h = 100;
 
-	////********MAke Play button***********
-	//string Play2offpath = s_cwd_images + "/Player2off.png";
+	//********MAke Play button***********
+	string Playpath = s_cwd_images + "/Play_Hyo.png";
 
-	//surface = IMG_Load(Play2offpath.c_str());
+	surface = IMG_Load(Playpath.c_str());
 
-	//SDL_Texture *PlayS;
+	SDL_Texture *PlayS;
 
-	//PlayS = SDL_CreateTextureFromSurface(renderer, surface);
+	PlayS = SDL_CreateTextureFromSurface(renderer, surface);
 
-	//SDL_Rect PlaySPos;
+	SDL_Rect PlaySPos;
 
-	//PlaySPos.x = 200;
-	//PlaySPos.y = 370;
-	//PlaySPos.w = 648;
-	//PlaySPos.h = 144;
+	PlaySPos.x = 700;
+	PlaySPos.y = 680;
+	PlaySPos.w = 324;
+	PlaySPos.h = 70;
 
-	////********MAke play off button***********
-	//string Play2offpath = s_cwd_images + "/Player2off.png";
+	//********MAke play off button***********
+	string Playoffpath = s_cwd_images + "/Playoff_Hyo.png";
 
-	//surface = IMG_Load(Play2offpath.c_str());
+	surface = IMG_Load(Playoffpath.c_str());
 
-	//SDL_Texture *PlaySoff;
+	SDL_Texture *PlaySoff;
 
-	//PlaySoff = SDL_CreateTextureFromSurface(renderer, surface);
+	PlaySoff = SDL_CreateTextureFromSurface(renderer, surface);
 
-	//SDL_Rect PlaySoffPos;
+	SDL_Rect PlaySoffPos;
 
-	//PlaySoffPos.x = 200;
-	//PlaySoffPos.y = 370;
-	//PlaySoffPos.w = 648;
-	//PlaySoffPos.h = 144;
+	PlaySoffPos.x = 200;
+	PlaySoffPos.y = 370;
+	PlaySoffPos.w = 324;
+	PlaySoffPos.h = 70;
 
    //********MAke Instructions button***********
-  /*string titlePath = s_cwd_images + "/Title.png";
+  string instructPath = s_cwd_images + "/Instructions_Hyo.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(instructPath.c_str());
 
   SDL_Texture *instruct;
 
-  title = SDL_CreateTextureFromSurface(renderer, surface);
+  instruct = SDL_CreateTextureFromSurface(renderer, surface);
 
   SDL_Rect inPos;
 
   inPos.x = 200;
-  inPos.y = 540;
-  inPos.w = 648;
-  inPos.h = 144;*/
+  inPos.y = 460;
+  inPos.w = 600;
+  inPos.h = 100;
 
   //********MAke Instructions off button***********
-  /*string titlePath = s_cwd_images + "/Title.png";
+  string instructOffPath = s_cwd_images + "/Instructionsoff_Hyo.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(instructOffPath.c_str());
 
   SDL_Texture *instructOff;
 
@@ -334,13 +331,13 @@ int main(int argc, char* argv[]) {
 
   inOffPos.x = 200;
   inOffPos.y = 540;
-  inOffPos.w = 648;
-  inOffPos.h = 144;*/
+  inOffPos.w = 600;
+  inOffPos.h = 100;
 
   //********MAke Instructions text***********
-  /*string titlePath = s_cwd_images + "/Title.png";
+  string inTextPath = s_cwd_images + "/InstructText.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(inTextPath.c_str());
 
   SDL_Texture *instructText;
 
@@ -348,31 +345,31 @@ int main(int argc, char* argv[]) {
 
   SDL_Rect inTextPos;
 
-  inTextPos.x = 200;
-  inTextPos.y = 540;
-  inTextPos.w = 648;
-  inTextPos.h = 144;*/
+  inTextPos.x = 160;
+  inTextPos.y = 140;
+  inTextPos.w = 720;
+  inTextPos.h = 550;
 
   //********MAke Win text***********
-  /*string titlePath = s_cwd_images + "/Title.png";
+  string winPath = s_cwd_images + "/winText_Hyo.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(winPath.c_str());
 
-  SDL_Texture *instructText;
+  SDL_Texture *winText;
 
   winText = SDL_CreateTextureFromSurface(renderer, surface);
 
   SDL_Rect winTextPos;
 
   winTextPos.x = 200;
-  winTextPos.y = 540;
-  winTextPos.w = 648;
-  winTextPos.h = 144;*/
+  winTextPos.y = 100;
+  winTextPos.w = 547;
+  winTextPos.h = 115;
 
   //********MAke Lose text***********
-  /*string titlePath = s_cwd_images + "/Title.png";
+  string losePath = s_cwd_images + "/loseText.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(losePath.c_str());
 
   SDL_Texture *loseText;
 
@@ -381,62 +378,62 @@ int main(int argc, char* argv[]) {
   SDL_Rect loseTextPos;
 
   loseTextPos.x = 200;
-  loseTextPos.y = 540;
-  loseTextPos.w = 648;
-  loseTextPos.h = 144;*/
+  loseTextPos.y = 100;
+  loseTextPos.w = 547;
+  loseTextPos.h = 115;
 
    //********MAke Quit***********
-  /*string quitPath = s_cwd_images + "/Title.png";
+  string quitPath = s_cwd_images + "/Quit_Hyo.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(quitPath.c_str());
 
   SDL_Texture *Quiti;
 
-  title = SDL_CreateTextureFromSurface(renderer, surface);
+  Quiti = SDL_CreateTextureFromSurface(renderer, surface);
 
   SDL_Rect quitPos;
 
   quitPos.x = 200;
-  quitPos.y = 710;
-  quitPos.w = 648;
-  quitPos.h = 145;*/
+  quitPos.y = 590;
+  quitPos.w = 600;
+  quitPos.h = 100;
 
   //********MAke QuitOff***********
-  /*string quitOffPath = s_cwd_images + "/Title.png";
+  string quitOffPath = s_cwd_images + "/Quitoff_Hyo.png";
 
   surface = IMG_Load(quitOffPath.c_str());
 
   SDL_Texture *Quito;
 
-  title = SDL_CreateTextureFromSurface(renderer, surface);
+  Quito = SDL_CreateTextureFromSurface(renderer, surface);
 
   SDL_Rect quitOffPos;
 
   quitOffPos.x = 200;
   quitOffPos.y = 710;
-  quitOffPos.w = 648;
-  quitOffPos.h = 145;*/
+  quitOffPos.w = 600;
+  quitOffPos.h = 100;
 
   //********MAke menu button***********
-  /*string quitPath = s_cwd_images + "/Title.png";
+  string menuButPath = s_cwd_images + "/Menu_Hyo.png";
 
-  surface = IMG_Load(titlePath.c_str());
+  surface = IMG_Load(menuButPath.c_str());
 
-  SDL_Texture *menu;
+  SDL_Texture *menuBut;
 
-  menu = SDL_CreateTextureFromSurface(renderer, surface);
+  menuBut = SDL_CreateTextureFromSurface(renderer, surface);
 
   SDL_Rect menuPos;
 
-  menuPos.x = 200;
-  menuPos.y = 710;
-  menuPos.w = 648;
-  menuPos.h = 145;*/
+  menuPos.x = 5;
+  menuPos.y = 680;
+  menuPos.w = 324;
+  menuPos.h = 70;
 
   //********MAke menu off***********
-  /*string quitOffPath = s_cwd_images + "/Title.png";
+  string menuOffPath = s_cwd_images + "/Menuoff_Hyo.png";
 
-  surface = IMG_Load(quitOffPath.c_str());
+  surface = IMG_Load(menuOffPath.c_str());
 
   SDL_Texture *menuOff;
 
@@ -444,10 +441,10 @@ int main(int argc, char* argv[]) {
 
   SDL_Rect menuOffPos;
 
-  menuOffPos.x = 200;
-  menuOffPos.y = 710;
-  menuOffPos.w = 648;
-  menuOffPos.h = 145;*/
+  menuOffPos.x = 5;
+  menuOffPos.y = 680;
+  menuOffPos.w = 324;
+  menuOffPos.h = 70;
 
     //***********Create Cursor*********
     //create cursor
@@ -475,7 +472,7 @@ int main(int argc, char* argv[]) {
 	activePos.w = 10;
 	activePos.h = 10;
 
-	int CursSpeed = 400;
+	//int CursSpeed = 400;
 
     SDL_GameController* gGameController = NULL;
 
@@ -580,27 +577,17 @@ int main(int argc, char* argv[]) {
 
     			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
 
-				//SDL_RenderCopy(renderer, instruct, NULL, &inPos);
+    			//SDL_RenderCopy(renderer, Play1off, NULL, &Play1offPos);
+
+    			//SDL_RenderCopy(renderer, Play2off, NULL, &Play2offPos);
+
+				SDL_RenderCopy(renderer, instruct, NULL, &inPos);
 
 				//SDL_RenderCopy(renderer, instructOff, NULL, &inOffPos);
 
-				//SDL_RenderCopy(renderer, instructText, NULL, &inTextPos);
-
-				//SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
-
-				//SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
-
-				//SDL_RenderCopy(renderer, Quiti, NULL, &quitPos);
+				SDL_RenderCopy(renderer, Quiti, NULL, &quitPos);
 
 				//SDL_RenderCopy(renderer, Quito, NULL, &quitOffPos);
-
-				//SDL_RenderCopy(renderer, menu, NULL, &menuPos);
-
-				//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
-
-				//SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
-
-				//SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
 
     			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
 
@@ -648,17 +635,29 @@ int main(int argc, char* argv[]) {
     	    			}
     	    		}
 
-					UpdateBackground();
+    	    		//Update
+    	    		    			UpdateBackground();
 
-					//Start Drawing
-					//Clear SDL renderer
-					SDL_RenderClear(renderer);
-					//Draw the bkgd1 image
-					SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-					//Draw the bkgd2 image
-					SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    	    		    			//Start Drawing
+    	    		    			//Clear SDL renderer
+    	    		    			SDL_RenderClear(renderer);
+    	    		    			//Draw the bkgd1 image
+    	    		    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    	    		    			//Draw the bkgd2 image
+    	    		    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-					SDL_RenderPresent(renderer);
+    	    		    			SDL_RenderCopy(renderer, title, NULL, &titlePos);
+
+    	    						SDL_RenderCopy(renderer, instructText, NULL, &inTextPos);
+
+    	    						SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+
+    	    						//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+
+    	    		    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+    	    		    			//SDL Render present
+    	    		    			SDL_RenderPresent(renderer);
     	    	}
     	    	break; //end instructions case
 
@@ -706,17 +705,23 @@ int main(int argc, char* argv[]) {
         	    					break;
         	    				}
         	    			}
-						UpdateBackground();
+   	   	    		//Update
+   	   	    		    			UpdateBackground();
 
-						//Start Drawing
-						//Clear SDL renderer
-						SDL_RenderClear(renderer);
-						//Draw the bkgd1 image
-						SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-						//Draw the bkgd2 image
-						SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+   	   	    		    			//Start Drawing
+   	   	    		    			//Clear SDL renderer
+   	   	    		    			SDL_RenderClear(renderer);
+   	   	    		    			//Draw the bkgd1 image
+   	   	    		    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+   	   	    		    			//Draw the bkgd2 image
+   	   	    		    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-						SDL_RenderPresent(renderer);
+   	   	    		    			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
+
+   	   	    		    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+   	   	    		    			//SDL Render present
+   	   	    		    			SDL_RenderPresent(renderer);
         	    		}
         	    		break; //end players1 case
 
@@ -729,6 +734,7 @@ int main(int argc, char* argv[]) {
 
     	   	    		while (players2)
     	   	    		{
+
 							thisTime = SDL_GetTicks();
 							deltaTime = (float)(thisTime - lastTime) / 1000;
 							lastTime = thisTime;
@@ -765,17 +771,23 @@ int main(int argc, char* argv[]) {
     	    	    	    		}
     	    	    	    	}
 
-								UpdateBackground();
+    	    	    	    	//Update
+    	    	    	    	    			UpdateBackground();
 
-								//Start Drawing
-								//Clear SDL renderer
-								SDL_RenderClear(renderer);
-								//Draw the bkgd1 image
-								SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-								//Draw the bkgd2 image
-								SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    	    	    	    	    			//Start Drawing
+    	    	    	    	    			//Clear SDL renderer
+    	    	    	    	    			SDL_RenderClear(renderer);
+    	    	    	    	    			//Draw the bkgd1 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    	    	    	    	    			//Draw the bkgd2 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-								SDL_RenderPresent(renderer);
+    	    	    	    	    			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+
+    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+    	    	    	    	    			//SDL Render present
+    	    	    	    	    			SDL_RenderPresent(renderer);
     	    	    	    }
     	    	    	    break; //end players2 case
 
@@ -788,6 +800,9 @@ int main(int argc, char* argv[]) {
 
     	    	    	    while (win)
     	    	    	    {
+    							thisTime = SDL_GetTicks();
+    							deltaTime = (float)(thisTime - lastTime) / 1000;
+    							lastTime = thisTime;
     	    	    	    	//check for input events
     	    	    	    	if (SDL_PollEvent(&event))
     	    	    	    	{
@@ -821,17 +836,31 @@ int main(int argc, char* argv[]) {
     	    	    	    	    }
     	    	    	    	}
 
-								UpdateBackground();
+    	    	    	    	//Update
+    	    	    	    	    			UpdateBackground();
 
-								//Start Drawing
-								//Clear SDL renderer
-								SDL_RenderClear(renderer);
-								//Draw the bkgd1 image
-								SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-								//Draw the bkgd2 image
-								SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    	    	    	    	    			//Start Drawing
+    	    	    	    	    			//Clear SDL renderer
+    	    	    	    	    			SDL_RenderClear(renderer);
+    	    	    	    	    			//Draw the bkgd1 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    	    	    	    	    			//Draw the bkgd2 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-								SDL_RenderPresent(renderer);
+    	    	    	    					SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
+
+    	    	    	    					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+
+    	    	    	    					//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+
+    	    	    	    					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+
+    	    	    	    					//SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+
+    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+    	    	    	    	    			//SDL Render present
+    	    	    	    	    			SDL_RenderPresent(renderer);
     	    	    	    }
     	    	    	    break; //end win case
 
@@ -844,6 +873,9 @@ int main(int argc, char* argv[]) {
 
     	    	    	    while (lose)
     	    	    	    {
+    							thisTime = SDL_GetTicks();
+    							deltaTime = (float)(thisTime - lastTime) / 1000;
+    							lastTime = thisTime;
     	    	    	    	//check for input events
     	    	    	    	if (SDL_PollEvent(&event))
     	    	    	    	{
@@ -877,17 +909,31 @@ int main(int argc, char* argv[]) {
     	    	    	    	    }
     	    	    	    	}
 
-								UpdateBackground();
+    	    	    	    	//Update
+    	    	    	    	    			UpdateBackground();
 
-								//Start Drawing
-								//Clear SDL renderer
-								SDL_RenderClear(renderer);
-								//Draw the bkgd1 image
-								SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-								//Draw the bkgd2 image
-								SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    	    	    	    	    			//Start Drawing
+    	    	    	    	    			//Clear SDL renderer
+    	    	    	    	    			SDL_RenderClear(renderer);
+    	    	    	    	    			//Draw the bkgd1 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    	    	    	    	    			//Draw the bkgd2 image
+    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-								SDL_RenderPresent(renderer);
+    	    	    	    					SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
+
+    	    	    	    					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+
+    	    	    	    					//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+
+    	    	    	    					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+
+    	    	    	    					//SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+
+    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+    	    	    	    	    			//SDL Render present
+    	    	    	    	    			SDL_RenderPresent(renderer);
     	    	    	    }
     	    	    	    break; //end lose case
     	}
