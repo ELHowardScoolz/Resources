@@ -8,6 +8,7 @@
 #if defined (_WIN32) || (_WIN64)
 
 	#include "SDL.h"
+	#include "SDL_image.h"
 
 #endif
 
@@ -21,7 +22,17 @@
 #if defined(__linux__)
 
 	#include "SDL2/SDL.h"
+	#include "SDL2/SDL_image.h"
 
+#endif
+
+#if defined (_WIN32) || (_WIN64)
+#include <direct.h>
+#define getcwd _getcwd
+#endif
+
+#if defined (_linux_)
+#include <unistd.h>
 #endif
 
 #include <stdio.h>
@@ -85,12 +96,25 @@ int main(int argc, char* argv[]) {
 
 	cout << "Running on Windows" << endl;
 
+	string s_cwd(getcwd(NULL, 0));
+
+	//create a string linking to the mac's images folder
+	string s_cwd_images = s_cwd + "\\Resources\\Images\\";
+
+	//test
+	//cout << s_cwd_images << endl;
+
 #endif
 
 #if defined(__linux__)
 
 	cout << "Running on Linux" << endl;
 	cout << "Added on Linux" << endl;
+
+	string s_cwd(getcwd(NULL, 0));
+
+	//create a string linking to the mac's images folder
+	string s_cwd_images = s_cwd + "\\Resources\\Images\\";
 
 #endif
 
