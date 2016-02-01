@@ -10,6 +10,7 @@
 	#include "SDL.h"
 	#include "SDL_image.h"
 	#include <direct.h>
+	#define getcwd _getcwd
 
 #endif
 
@@ -33,7 +34,7 @@
 
 #include <stdio.h>
 #include <iostream>
-#define getcwd _getcwd
+//#define getcwd _getcwd
 using namespace std;
 
 //create the SDL_Rectangle for the texture's position and size -x,y,w,h
@@ -59,33 +60,121 @@ int lastTime = 0;
 void UpdateBackground()
 {
 	//Update background 1
-	    			BG1pos_y += (bkgdSpeed * 1) * deltaTime;
+	BG1pos_y += (bkgdSpeed * 1) * deltaTime;
 
-	    			//set the new bkgd1 position
-	    			bkgd1Pos.y = (int)(BG1pos_y + 0.5f);
+	//set the new bkgd1 position
+	bkgd1Pos.y = (int)(BG1pos_y + 0.5f);
 
-	    			//reset when off the bottom of the screen
-	    			if(bkgd1Pos.y >= 768)
-	    			{
-	    				bkgd1Pos.y =-768;
+	//reset when off the bottom of the screen
+	if(bkgd1Pos.y >= 768)
+	{
+		bkgd1Pos.y =-768;
 
-	    				BG1pos_y = bkgd1Pos.y;
-	    			}
+		BG1pos_y = bkgd1Pos.y;
+	}
 
-	    			//Update background 1
-	    			BG2pos_y += (bkgdSpeed * 1) * deltaTime;
+	//Update background 1
+	BG2pos_y += (bkgdSpeed * 1) * deltaTime;
 
-	    			//set the new bkgd1 position
-	    			bkgd2Pos.y = (int)(BG2pos_y + 0.5f);
+	//set the new bkgd1 position
+	bkgd2Pos.y = (int)(BG2pos_y + 0.5f);
 
-	    			//reset when off the bottom of the screen
-	    			  if(bkgd2Pos.y >= 768)
-	    			  {
-	    			    bkgd2Pos.y =-768;
+	//reset when off the bottom of the screen
+	if(bkgd2Pos.y >= 768)
+	{
+		bkgd2Pos.y =-768;
 
-	    			    BG2pos_y = bkgd2Pos.y;
-	    			  }
+		BG2pos_y = bkgd2Pos.y;
+	}
 }
+
+const int JOYSTICK_DEAD_ZONE = 8000;
+
+float xDir, yDir;
+
+float pos_X, pos_Y;
+
+SDL_Rect cursorPos, activePos;
+
+int cursorSpeed = 400;
+
+void moveCursor (const SDL_ControllerAxisEvent event)
+{
+	if (event.which == 0)
+	{
+		if(event.axis == 0)
+		{
+			if (event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				xDir = -1.0f;
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				xDir = 1.0f;
+			}
+			else
+			{
+				xDir = 0.0f;
+			}
+		}
+
+		if(event.axis == 1)
+		{
+			if (event.value < -JOYSTICK_DEAD_ZONE)
+			{
+				yDir = -1.0f;
+			}
+			else if(event.value > JOYSTICK_DEAD_ZONE)
+			{
+				yDir = 1.0f;
+			}
+			else
+			{
+				yDir = 0.0f;
+			}
+		}
+	}
+}
+
+void UpdateCursor (float deltaTime)
+{
+	pos_X += (cursorSpeed * xDir) * deltaTime;
+	pos_Y += (cursorSpeed * yDir) * deltaTime;
+
+	cursorPos.x = (int)(pos_X + 0.5f);
+	cursorPos.y = (int)(pos_Y + 0.5f);
+
+	activePos.x = cursorPos.x;
+	activePos.y = cursorPos.y;
+
+	if(cursorPos.x < 0)
+	{
+		cursorPos.x = 0;
+		pos_X = cursorPos.x;
+	}
+
+	if(cursorPos.x > 1024 - cursorPos.w)
+	{
+		cursorPos.x = 1024 - cursorPos.w;
+		pos_X = cursorPos.x;
+	}
+
+	if(cursorPos.y < 0)
+	{
+		cursorPos.y = 0;
+		pos_Y = cursorPos.y;
+	}
+
+	if(cursorPos.y > 768 - cursorPos.w)
+	{
+		cursorPos.y = 768 - cursorPos.w;
+		pos_Y = cursorPos.y;
+	}
+}
+
+bool players1Over = false, players2Over = false, instructionsOver = false, quitOver = false, menuOver = false, playOver = false;
+
+#include "Player.h"
 
 int main(int argc, char* argv[]) {
 
@@ -152,6 +241,8 @@ int main(int argc, char* argv[]) {
 
     //create the renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+
+    Player player1 = Player(renderer, 0, PlayerPath.c_str(), 250.0, 500.0);
 
     //******Create BackGround******
     string BKGDpath = s_cwd_images + "/Hyo.png";
@@ -456,7 +547,7 @@ int main(int argc, char* argv[]) {
     SDL_FreeSurface(surface);
 
     //create the SDL_Rectangle for the texture's position and size -x,y,w,h
-    SDL_Rect cursorPos, activePos;
+    //SDL_Rect cursorPos, activePos;
 
     //set the X,Y,W, and H for the Rectangle
     cursorPos.x = 0;
@@ -469,7 +560,7 @@ int main(int argc, char* argv[]) {
 	activePos.w = 10;
 	activePos.h = 10;
 
-	//int CursSpeed = 400;
+	//int cursorSpeed = 400;
 
     SDL_GameController* gGameController = NULL;
 
@@ -531,34 +622,51 @@ int main(int argc, char* argv[]) {
     					{
     						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
     						{
-    							menu = false;
-    							gameState = INSTRUCTIONS;
-    						}
+    							if(players1Over)
+    							{
+    								menu = false;
+    								gameState = PLAYERS1;
+    								players1Over = false;
+    							}
 
-    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-    						{
-    						    menu = false;
-    						    gameState = PLAYERS1;
-    						}
+    							if(players2Over)
+    							{
+    								menu = false;
+    								gameState = PLAYERS2;
+    								players2Over = false;
+    							}
 
-    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_X)
-    						{
-    						    menu = false;
-    						    gameState = PLAYERS2;
-    						}
+    							if(instructionsOver)
+    							{
+    								menu = false;
+    								gameState = INSTRUCTIONS;
+    								players1Over = false;
+    							}
 
-    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_Y)
-    						{
-    						    menu = false;
-    						    quit = true;
+    							if(quitOver)
+    							{
+    								menu = false;
+    								quit = true;
+    								players1Over = false;
+    							}
     						}
     					}
+    					break;
+
+    				case SDL_CONTROLLERAXISMOTION:
+    					moveCursor(event.caxis);
     					break;
     				}
     			}
 
     			//Update
     			UpdateBackground();
+    			UpdateCursor(deltaTime);
+
+    			players1Over = SDL_HasIntersection(&activePos, &Play1Pos);
+    			players2Over = SDL_HasIntersection(&activePos, &Play2Pos);
+    			instructionsOver = SDL_HasIntersection(&activePos, &inPos);
+    			quitOver = SDL_HasIntersection(&activePos, &quitPos);
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -570,21 +678,41 @@ int main(int argc, char* argv[]) {
 
     			SDL_RenderCopy(renderer, title, NULL, &titlePos);
 
+    			if(players1Over)
+    			{
+    			SDL_RenderCopy(renderer, Play1off, NULL, &Play1offPos);
+    			}
+    			else
+    			{
     			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
+    			}
 
-    			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+    			if(players2Over)
+    			{
+        		SDL_RenderCopy(renderer, Play2off, NULL, &Play2offPos);
+    			}
+    			else
+    			{
+        		SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+    			}
 
-    			//SDL_RenderCopy(renderer, Play1off, NULL, &Play1offPos);
-
-    			//SDL_RenderCopy(renderer, Play2off, NULL, &Play2offPos);
-
+    			if(instructionsOver)
+    			{
+    			SDL_RenderCopy(renderer, instructOff, NULL, &inOffPos);
+    			}
+    			else
+    			{
 				SDL_RenderCopy(renderer, instruct, NULL, &inPos);
+    			}
 
-				//SDL_RenderCopy(renderer, instructOff, NULL, &inOffPos);
-
+    			if(quitOver)
+    			{
+    			SDL_RenderCopy(renderer, Quito, NULL, &quitOffPos);
+    			}
+    			else
+    			{
 				SDL_RenderCopy(renderer, Quiti, NULL, &quitPos);
-
-				//SDL_RenderCopy(renderer, Quito, NULL, &quitOffPos);
+    			}
 
     			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
 
@@ -698,12 +826,18 @@ int main(int argc, char* argv[]) {
         	    						    players1 = false;
         	    						    gameState = LOSE;
         	    						}
+        	    						player1.OnControllerButton(event.cbutton);
         	    					}
         	    					break;
+
+        	    				case SDL_CONTROLLERAXISMOTION:
+        	    					player1.ONControllerAxis(event.caxis);
         	    				}
         	    			}
    	   	    		//Update
    	   	    		    			UpdateBackground();
+
+   	   	    		    			player1.Update(deltaTime);
 
    	   	    		    			//Start Drawing
    	   	    		    			//Clear SDL renderer
@@ -715,7 +849,7 @@ int main(int argc, char* argv[]) {
 
    	   	    		    			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
 
-   	   	    		    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+   	   	    		    			player1.Draw(renderer);
 
    	   	    		    			//SDL Render present
    	   	    		    			SDL_RenderPresent(renderer);
