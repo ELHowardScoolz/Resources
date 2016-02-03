@@ -242,7 +242,8 @@ int main(int argc, char* argv[]) {
     //create the renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
 
-    Player player1 = Player(renderer, 0, PlayerPath.c_str(), 250.0, 500.0);
+    Player player1 = Player(renderer, 0, s_cwd_images.c_str(), 250.0, 500.0);
+    Player player2 = Player(renderer, 1, s_cwd_images.c_str(), 750.0, 500.0);
 
     //******Create BackGround******
     string BKGDpath = s_cwd_images + "/Hyo.png";
@@ -354,7 +355,7 @@ int main(int argc, char* argv[]) {
 	SDL_Rect Play2offPos;
 
 	Play2offPos.x = 200;
-	Play2offPos.y = 370;
+	Play2offPos.y = 330;
 	Play2offPos.w = 600;
 	Play2offPos.h = 100;
 
@@ -385,8 +386,8 @@ int main(int argc, char* argv[]) {
 
 	SDL_Rect PlaySoffPos;
 
-	PlaySoffPos.x = 200;
-	PlaySoffPos.y = 370;
+	PlaySoffPos.x = 700;
+	PlaySoffPos.y = 680;
 	PlaySoffPos.w = 324;
 	PlaySoffPos.h = 70;
 
@@ -418,7 +419,7 @@ int main(int argc, char* argv[]) {
   SDL_Rect inOffPos;
 
   inOffPos.x = 200;
-  inOffPos.y = 540;
+  inOffPos.y = 460;
   inOffPos.w = 600;
   inOffPos.h = 100;
 
@@ -498,7 +499,7 @@ int main(int argc, char* argv[]) {
   SDL_Rect quitOffPos;
 
   quitOffPos.x = 200;
-  quitOffPos.y = 710;
+  quitOffPos.y = 590;
   quitOffPos.w = 600;
   quitOffPos.h = 100;
 
@@ -560,15 +561,18 @@ int main(int argc, char* argv[]) {
 	activePos.w = 10;
 	activePos.h = 10;
 
-	//int cursorSpeed = 400;
-
-    SDL_GameController* gGameController = NULL;
-
-    //****Open Game Controller
-    gGameController = SDL_GameControllerOpen(0);
-
     //*****Turn on Game Controller Events
     SDL_GameControllerEventState(SDL_ENABLE);
+
+    SDL_GameController* gGameController0 = NULL;
+
+    //****Open Game Controller
+    gGameController0 = SDL_GameControllerOpen(0);
+
+    SDL_GameController* gGameController1 = NULL;
+
+    //****Open Game Controller
+    gGameController1 = SDL_GameControllerOpen(1);
 
     //*****SDL Event to handle input
     SDL_Event event;
@@ -723,350 +727,415 @@ int main(int argc, char* argv[]) {
     		break; //end main menu case
 
     	case INSTRUCTIONS:
-    	    	instructions = true;
-    	    	cout << "The GameState is Instructions" << endl;
-    	    	cout << "Press the A button for Main Menu" << endl;
-    	    	cout << endl;
+    		instructions = true;
+    		cout << "The GameState is Instructions" << endl;
+    		cout << "Press the A button for Main Menu" << endl;
+    		cout << endl;
 
-    	    	while (instructions)
-    	    	{
-					thisTime = SDL_GetTicks();
-					deltaTime = (float)(thisTime - lastTime) / 1000;
-					lastTime = thisTime;
-    	    		//check for input events
-    	    		if (SDL_PollEvent(&event))
-    	    		{
-    	    			//check to see if the SDL Window is closed - player clicks X in window
-    	    			if(event.type == SDL_QUIT)
-    	    			{
-    	    				quit = true;
-    	    				instructions = false;
-    	    				break;
-    	    			}
+    		while (instructions)
+    		{
+    			thisTime = SDL_GetTicks();
+    			deltaTime = (float)(thisTime - lastTime) / 1000;
+    			lastTime = thisTime;
+    			//check for input events
+    			if (SDL_PollEvent(&event))
+    			{
+    				//check to see if the SDL Window is closed - player clicks X in window
+    				if(event.type == SDL_QUIT)
+    				{
+    					quit = true;
+    					instructions = false;
+    					break;
+    				}
 
-    	    			switch (event.type)
-    	    			{
-    	    			case SDL_CONTROLLERBUTTONDOWN:
-    	    				if (event.cdevice.which == 0)
+    				switch (event.type)
+    				{
+    				case SDL_CONTROLLERBUTTONDOWN:
+    					if (event.cdevice.which == 0)
 
-    	    				{
-    	    					if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-    	    					{
-    	    						instructions = false;
-    	    						gameState = MENU;
-    	    					}
-    	    				}
-    	    				break;
-    	    			}
-    	    		}
+    					{
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+    						{
+    							instructions = false;
+    							gameState = MENU;
+    						}
+    					}
+    					break;
 
-    	    		//Update
-    	    		    			UpdateBackground();
+    				case SDL_CONTROLLERAXISMOTION:
+    					moveCursor(event.caxis);
+    					break;
+    				}
+    			}
 
-    	    		    			//Start Drawing
-    	    		    			//Clear SDL renderer
-    	    		    			SDL_RenderClear(renderer);
-    	    		    			//Draw the bkgd1 image
-    	    		    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-    	    		    			//Draw the bkgd2 image
-    	    		    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    			//Update
+    			UpdateBackground();
+    			UpdateCursor(deltaTime);
 
-    	    		    			SDL_RenderCopy(renderer, title, NULL, &titlePos);
+    			menuOver = SDL_HasIntersection(&activePos, &menuPos);
 
-    	    						SDL_RenderCopy(renderer, instructText, NULL, &inTextPos);
+    			//Start Drawing
+    			//Clear SDL renderer
+    			SDL_RenderClear(renderer);
+    			//Draw the bkgd1 image
+    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    			//Draw the bkgd2 image
+    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-    	    						SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+    			SDL_RenderCopy(renderer, title, NULL, &titlePos);
 
-    	    						//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+    			SDL_RenderCopy(renderer, instructText, NULL, &inTextPos);
 
-    	    		    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+    			if(menuOver)
+    			{
+    				SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+    			}
+    			else
+    			{
+    				SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+    			}
 
-    	    		    			//SDL Render present
-    	    		    			SDL_RenderPresent(renderer);
-    	    	}
-    	    	break; //end instructions case
+    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+    			//SDL Render present
+				SDL_RenderPresent(renderer);
+    		}
+    		break; //end instructions case
 
     	case PLAYERS1:
-     	    		players1 = true;
- 	   	    		cout << "The GameState is 1 Player Game" << endl;
-   	   	    		cout << "Press the A button for Win screen" << endl;
-   	   	    		cout << "Press the B button for Lose screen" << endl;
-   	   	    		cout << endl;
+    		players1 = true;
+    		cout << "The GameState is 1 Player Game" << endl;
+    		cout << "Press the A button for Win screen" << endl;
+    		cout << "Press the B button for Lose screen" << endl;
+    		cout << endl;
 
-   	   	    		while (players1)
-   	   	    		{
-						thisTime = SDL_GetTicks();
-						deltaTime = (float)(thisTime - lastTime) / 1000;
-						lastTime = thisTime;
-   	   	    			//check for input events
-   	   	    			if (SDL_PollEvent(&event))
-   	   	    			{
-   	   	    				//check to see if the SDL Window is closed - player clicks X in window
-   	   	    				if(event.type == SDL_QUIT)
-   	   	    				{
-   	   	    					quit = true;
-   	   	    					players1 = false;
-   	   	    					break;
-   	   	    				}
+    		while (players1)
+    		{
+    			thisTime = SDL_GetTicks();
+    			deltaTime = (float)(thisTime - lastTime) / 1000;
+    			lastTime = thisTime;
+    			//check for input events
+    			if (SDL_PollEvent(&event))
+    			{
+    				//check to see if the SDL Window is closed - player clicks X in window
+    				if(event.type == SDL_QUIT)
+    				{
+    					quit = true;
+    					players1 = false;
+    					break;
+    				}
 
-        	    				switch (event.type)
-        	    				{
-        	    				case SDL_CONTROLLERBUTTONDOWN:
-        	    					if (event.cdevice.which == 0)
+    				switch (event.type)
+    				{
+    				case SDL_CONTROLLERBUTTONDOWN:
+    					if (event.cdevice.which == 0)
 
-        	    					{
-        	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-        	    						{
-        	    							players1 = false;
-        	    							gameState = WIN;
-        	    						}
+    					{
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_X)
+    						{
+    							players1 = false;
+    							gameState = WIN;
+    						}
 
-        	    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-        	    						{
-        	    						    players1 = false;
-        	    						    gameState = LOSE;
-        	    						}
-        	    						player1.OnControllerButton(event.cbutton);
-        	    					}
-        	    					break;
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_Y)
+    						{
+    							players1 = false;
+    							gameState = LOSE;
+    						}
+    						player1.OnControllerButton(event.cbutton);
+    					}
+    					break;
 
-        	    				case SDL_CONTROLLERAXISMOTION:
-        	    					player1.ONControllerAxis(event.caxis);
-        	    				}
-        	    			}
-   	   	    		//Update
-   	   	    		    			UpdateBackground();
+    				case SDL_CONTROLLERAXISMOTION:
+    					player1.OnControllerAxis(event.caxis);
+    					break;
+    				}
+    			}
+    			//Update
+    			UpdateBackground();
 
-   	   	    		    			player1.Update(deltaTime);
+    			player1.Update(deltaTime);
 
-   	   	    		    			//Start Drawing
-   	   	    		    			//Clear SDL renderer
-   	   	    		    			SDL_RenderClear(renderer);
-   	   	    		    			//Draw the bkgd1 image
-   	   	    		    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-   	   	    		    			//Draw the bkgd2 image
-   	   	    		    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    			//Start Drawing
+    			//Clear SDL renderer
+    			SDL_RenderClear(renderer);
+    			//Draw the bkgd1 image
+    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    			//Draw the bkgd2 image
+    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-   	   	    		    			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
+    			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
 
-   	   	    		    			player1.Draw(renderer);
+    			player1.Draw(renderer);
 
-   	   	    		    			//SDL Render present
-   	   	    		    			SDL_RenderPresent(renderer);
-        	    		}
-        	    		break; //end players1 case
+    			//SDL Render present
+    			SDL_RenderPresent(renderer);
+    		}
+    		break; //end players1 case
 
     	case PLAYERS2:
- 	     	    		players2 = true;
-         	    		cout << "The GameState is 2 Player Game" << endl;
-         	    		cout << "Press the A button for Win screen" << endl;
-         	    		cout << "Press the B button for Lose screen" << endl;
-         	    		cout << endl;
+    		players2 = true;
+    		cout << "The GameState is 2 Player Game" << endl;
+    		cout << "Press the A button for Win screen" << endl;
+    		cout << "Press the B button for Lose screen" << endl;
+    		cout << endl;
 
-    	   	    		while (players2)
-    	   	    		{
+    		while (players2)
+    		{
 
-							thisTime = SDL_GetTicks();
-							deltaTime = (float)(thisTime - lastTime) / 1000;
-							lastTime = thisTime;
-    	    			//check for input events
-    	    	    	    	if (SDL_PollEvent(&event))
-    	    	    	    	{
-    	    	    	    		//check to see if the SDL Window is closed - player clicks X in window
-    	    	    	    		if(event.type == SDL_QUIT)
-    	    	    	    		{
-    	    	    	    			quit = true;
-    	    	    	    			players2 = false;
-    	    	    	    			break;
-    	    	    	    		}
+    			thisTime = SDL_GetTicks();
+    			deltaTime = (float)(thisTime - lastTime) / 1000;
+    			lastTime = thisTime;
+    			//check for input events
+    			if (SDL_PollEvent(&event))
+    			{
+    				//check to see if the SDL Window is closed - player clicks X in window
+    				if(event.type == SDL_QUIT)
+    				{
+    					quit = true;
+    					players2 = false;
+    					break;
+    				}
 
-    	    	    	    		switch (event.type)
-    	    	    	    		{
-    	    	    	    		case SDL_CONTROLLERBUTTONDOWN:
-    	    	    	    			if (event.cdevice.which == 0)
+    				switch (event.type)
+    				{
+    				case SDL_CONTROLLERBUTTONDOWN:
+    					if (event.cdevice.which == 0 || event.cdevice.which == 1)
 
-    	    	    	    			{
-    	    	    	    				if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-    	    	    	    				{
-    	    	    	    					players2 = false;
-    	    	    	    					gameState = WIN;
-    	    	    	    				}
+    					{
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_X)
+    						{
+    							players2 = false;
+    							gameState = WIN;
+    						}
 
-    	    	    	    				if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-    	    	    	    				{
-    	    	    	    					players2 = false;
-    	    	    	    					gameState = LOSE;
-    	    	    	    				}
-    	    	    	    			}
-    	    	    	    			break;
-    	    	    	    		}
-    	    	    	    	}
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_Y)
+    						{
+    							players2 = false;
+    							gameState = LOSE;
+    						}
+    					}
 
-    	    	    	    	//Update
-    	    	    	    	    			UpdateBackground();
+    					player1.OnControllerButton(event.cbutton);
 
-    	    	    	    	    			//Start Drawing
-    	    	    	    	    			//Clear SDL renderer
-    	    	    	    	    			SDL_RenderClear(renderer);
-    	    	    	    	    			//Draw the bkgd1 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-    	    	    	    	    			//Draw the bkgd2 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    					player2.OnControllerButton(event.cbutton);
 
-    	    	    	    	    			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+    					break;
 
-    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+    				case SDL_CONTROLLERAXISMOTION:
+    					player1.OnControllerAxis(event.caxis);
+    					player2.OnControllerAxis(event.caxis);
+    				}
+    			}
 
-    	    	    	    	    			//SDL Render present
-    	    	    	    	    			SDL_RenderPresent(renderer);
-    	    	    	    }
-    	    	    	    break; //end players2 case
+    			//Update
+    			UpdateBackground();
+
+    			player1.Update(deltaTime);
+    			player2.Update(deltaTime);
+
+    			//Start Drawing
+    			//Clear SDL renderer
+    			SDL_RenderClear(renderer);
+    			//Draw the bkgd1 image
+    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    			//Draw the bkgd2 image
+    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+
+    			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+
+    			player1.Draw(renderer);
+
+    			player2.Draw(renderer);
+
+    			//SDL Render present
+    			SDL_RenderPresent(renderer);
+    		}
+    		break; //end players2 case
 
     	case WIN:
-    	    	    	    win = true;
-    	    	    	    cout << "The GameState is Win Screen" << endl;
-    	    	    	    cout << "Press the A button for Main Menu" << endl;
-    	    	    	    cout << "Press the B button to Quit" << endl;
-    	    	    	    cout << endl;
+    		win = true;
+    		cout << "The GameState is Win Screen" << endl;
+    		cout << "Press the A button for Main Menu" << endl;
+    		cout << "Press the B button to Quit" << endl;
+    		cout << endl;
 
-    	    	    	    while (win)
-    	    	    	    {
-    							thisTime = SDL_GetTicks();
-    							deltaTime = (float)(thisTime - lastTime) / 1000;
-    							lastTime = thisTime;
-    	    	    	    	//check for input events
-    	    	    	    	if (SDL_PollEvent(&event))
-    	    	    	    	{
-    	    	    	    	    //check to see if the SDL Window is closed - player clicks X in window
-    	    	    	    	    if(event.type == SDL_QUIT)
-    	    	    	    	    {
-    	    	    	    	    	quit = true;
-    	    	    	    	    	win = false;
-    	    	    	    	    	break;
-    	    	    	    	    }
+    		while (win)
+    		{
+    			thisTime = SDL_GetTicks();
+    			deltaTime = (float)(thisTime - lastTime) / 1000;
+    			lastTime = thisTime;
+    			//check for input events
+				if (SDL_PollEvent(&event))
+				{
+					//check to see if the SDL Window is closed - player clicks X in window
+					if(event.type == SDL_QUIT)
+					{
+						quit = true;
+						win = false;
+						break;
+					}
 
-    	    	    	    	    switch (event.type)
-    	    	    	    	    {
-    	    	    	    	    case SDL_CONTROLLERBUTTONDOWN:
-    	    	    	    	    	if (event.cdevice.which == 0)
+					switch (event.type)
+					{
+					case SDL_CONTROLLERBUTTONDOWN:
+						if (event.cdevice.which == 0)
 
-    	    	    	    	    	{
-    	    	    	    	    		if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-    	    	    	    	    		{
-    	    	    	    	    			win = false;
-    	    	    	    	    			gameState = MENU;
-    	    	    	    	    		}
+						{
+							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+							{
+								win = false;
+								gameState = MENU;
+							}
 
-    	    	    	    	    		if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-    	    	    	    	    		{
-    	    	    	    	    			win = false;
-    	    	    	    	    			quit = true;
-    	    	    	    	    		}
-    	    	    	    	    	}
-    	    	    	    	    	break;
-    	    	    	    	    }
-    	    	    	    	}
+							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+							{
+								win = false;
+								quit = true;
+							}
+						}
+						break;
 
-    	    	    	    	//Update
-    	    	    	    	    			UpdateBackground();
+					case SDL_CONTROLLERAXISMOTION:
+						moveCursor(event.caxis);
+						break;
+					}
+				}
 
-    	    	    	    	    			//Start Drawing
-    	    	    	    	    			//Clear SDL renderer
-    	    	    	    	    			SDL_RenderClear(renderer);
-    	    	    	    	    			//Draw the bkgd1 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-    	    	    	    	    			//Draw the bkgd2 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+				//Update
+				UpdateBackground();
+				UpdateCursor(deltaTime);
 
-    	    	    	    					SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
+				menuOver = SDL_HasIntersection(&activePos, &menuPos);
+				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
 
-    	    	    	    					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+				//Start Drawing
+				//Clear SDL renderer
+				SDL_RenderClear(renderer);
+				//Draw the bkgd1 image
+				SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+				//Draw the bkgd2 image
+				SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-    	    	    	    					//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+				SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
 
-    	    	    	    					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+				if(menuOver)
+				{
+					SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+				}
+				else
+				{
+					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+				}
 
-    	    	    	    					//SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+				if(playOver)
+				{
+					SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
 
-    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+				}
+				else
+				{
+					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+				}
 
-    	    	    	    	    			//SDL Render present
-    	    	    	    	    			SDL_RenderPresent(renderer);
-    	    	    	    }
-    	    	    	    break; //end win case
+				SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+				//SDL Render present
+				SDL_RenderPresent(renderer);
+    		}
+    		break; //end win case
 
     	case LOSE:
-    	    	    	    lose = true;
-    	    	    	    cout << "The GameState is Lose Screen" << endl;
-    	    	    	    cout << "Press the A button for Main Menu" << endl;
-    	    	    	    cout << "Press the B button to Quit" << endl;
-    	    	    	    cout << endl;
+    		lose = true;
+    		cout << "The GameState is Lose Screen" << endl;
+    		cout << "Press the A button for Main Menu" << endl;
+    		cout << "Press the B button to Quit" << endl;
+    		cout << endl;
 
-    	    	    	    while (lose)
-    	    	    	    {
-    							thisTime = SDL_GetTicks();
-    							deltaTime = (float)(thisTime - lastTime) / 1000;
-    							lastTime = thisTime;
-    	    	    	    	//check for input events
-    	    	    	    	if (SDL_PollEvent(&event))
-    	    	    	    	{
-    	    	    	    	    //check to see if the SDL Window is closed - player clicks X in window
-    	    	    	    	    if(event.type == SDL_QUIT)
-    	    	    	    	    {
-    	    	    	    	    	quit = true;
-    	    	    	    	    	lose = false;
-    	    	    	    	    	break;
-    	    	    	    	    }
+    		while (lose)
+    		{
+    			thisTime = SDL_GetTicks();
+    			deltaTime = (float)(thisTime - lastTime) / 1000;
+    			lastTime = thisTime;
+    			//check for input events
+				if (SDL_PollEvent(&event))
+				{
+					//check to see if the SDL Window is closed - player clicks X in window
+					if(event.type == SDL_QUIT)
+					{
+						quit = true;
+						lose = false;
+						break;
+					}
 
-    	    	    	    	    switch (event.type)
-    	    	    	    	    {
-    	    	    	    	    case SDL_CONTROLLERBUTTONDOWN:
-    	    	    	    	    	if (event.cdevice.which == 0)
+					switch (event.type)
+					{
+					case SDL_CONTROLLERBUTTONDOWN:
+						if (event.cdevice.which == 0)
 
-    	    	    	    	    	{
-    	    	    	    	    	    if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-    	    	    	    	    	    {
-    	    	    	    	    	    	lose = false;
-    	    	    	    	    	    	gameState = MENU;
-    	    	    	    	    	    }
+						{
+							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+							{
+								lose = false;
+								gameState = MENU;
+							}
 
-    	    	    	    	    	    if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-    	    	    	    	    	    {
-    	    	    	    	    	    	lose = false;
-    	    	    	    	    	    	quit = true;
-    	    	    	    	    	    }
-    	    	    	    	    	}
-    	    	    	    	    	break;
-    	    	    	    	    }
-    	    	    	    	}
+							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+							{
+								lose = false;
+								quit = true;
+							}
+						}
+						break;
 
-    	    	    	    	//Update
-    	    	    	    	    			UpdateBackground();
+					case SDL_CONTROLLERAXISMOTION:
+						moveCursor(event.caxis);
+						break;
+					}
+				}
 
-    	    	    	    	    			//Start Drawing
-    	    	    	    	    			//Clear SDL renderer
-    	    	    	    	    			SDL_RenderClear(renderer);
-    	    	    	    	    			//Draw the bkgd1 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-    	    	    	    	    			//Draw the bkgd2 image
-    	    	    	    	    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+				//Update
+				UpdateBackground();
+				UpdateCursor(deltaTime);
 
-    	    	    	    					SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
+				menuOver = SDL_HasIntersection(&activePos, &menuPos);
+				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
 
-    	    	    	    					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+				//Start Drawing
+				//Clear SDL renderer
+				SDL_RenderClear(renderer);
+				//Draw the bkgd1 image
+				SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+				//Draw the bkgd2 image
+				SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-    	    	    	    					//SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+				SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
 
-    	    	    	    					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+				if(menuOver)
+				{
+					SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+				}
+				else
+				{
+					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+				}
 
-    	    	    	    					//SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+				if(playOver)
+				{
+					SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
 
-    	    	    	    	    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+				}
+				else
+				{
+					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+				}
 
-    	    	    	    	    			//SDL Render present
-    	    	    	    	    			SDL_RenderPresent(renderer);
-    	    	    	    }
-    	    	    	    break; //end lose case
+				SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+
+				//SDL Render present
+				SDL_RenderPresent(renderer);
+    		}
+    		break; //end lose case
     	}
     }
 
