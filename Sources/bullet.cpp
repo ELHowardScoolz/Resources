@@ -23,7 +23,7 @@ Bullet::Bullet(SDL_Renderer *renderer, string filepath, float x, float y)
 
 	int w, h;
 	SDL_QueryTexture(texture, NULL, NULL, &w, &h);
-	posRect.w =w;
+	posRect.w = w;
 	posRect.h = h;
 	posRect.x = x - (posRect.w/2);
 	posRect.y = y;
@@ -39,7 +39,7 @@ void Bullet::Update(float deltaTime)
 {
 	if (active)
 	{
-		pos_Y +=(speed * yDir) * deltaTime;
+		pos_Y += (speed * yDir) * deltaTime;
 
 		posRect.y = (int)(pos_Y + 0.05f);
 

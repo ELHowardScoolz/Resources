@@ -30,7 +30,7 @@ class Player
 {
 public:
 
-	vector<Bullet>bulletList;
+	vector<Bullet> bulletList;
 
 	string PlayerPath;
 

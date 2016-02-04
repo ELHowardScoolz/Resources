@@ -43,13 +43,13 @@ Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float
 
 	string bulletPath;
 
-	if(pNum ==0)
+	if(pNum == 0)
 	{
-		bulletPath = filePath + "/bulletTest.png";
+		bulletPath = filePath + "/bulleTest.png";
 	}
 	else
 	{
-		bulletPath = filePath + "/bulletTest2.png";
+		bulletPath = filePath + "/bulleTest2.png";
 	}
 
 	for(int i = 0; i < 10; i++)
@@ -57,54 +57,6 @@ Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float
 		Bullet tmpBullet(renderer, bulletPath, -1000, -1000);
 
 		bulletList.push_back(tmpBullet);
-	}
-}
-
-void Player::Update(float deltaTime)
-{
-	pos_X += (speed *xDir) * deltaTime;
-	pos_Y += (speed *yDir) * deltaTime;
-
-	posRect.x = (int)(pos_X + 0.05f);
-	posRect.y = (int)(pos_Y + 0.05f);
-
-	if(posRect.x < 0)
-	{
-		posRect.x = 0;
-		pos_X = posRect.x;
-	}
-
-	if(posRect.x > 1024 - posRect.w)
-	{
-		posRect.x = 1024 - posRect.w;
-		pos_X = posRect.x;
-	}
-
-	if(posRect.y > 768 - posRect.h)
-	{
-		posRect.y = 768 - posRect.h;
-		pos_Y = posRect.y;
-	}
-
-	for(int i = 0; i < bulletList.size(); i++)
-	{
-		if(bulletList[i].active)
-		{
-			bulletList[i].Update(deltaTime);
-		}
-	}
-}
-
-void Player::Draw(SDL_Renderer *renderer)
-{
-	SDL_RenderCopy(renderer, texture, NULL, &posRect);
-
-	for(int i = 0; i < bulletList.size(); i++)
-	{
-		if(bulletList[i].active)
-		{
-			bulletList[i].Draw(renderer);
-		}
 	}
 }
 
@@ -221,6 +173,60 @@ void Player::OnControllerAxis(const SDL_ControllerAxisEvent event)
 					yDir = 0.0f;
 				}
 			}
+	}
+}
+
+void Player::Update(float deltaTime)
+{
+	pos_X += (speed *xDir) * deltaTime;
+	pos_Y += (speed *yDir) * deltaTime;
+
+	posRect.x = (int)(pos_X + 0.05f);
+	posRect.y = (int)(pos_Y + 0.05f);
+
+	if(posRect.x < 0)
+	{
+		posRect.x = 0;
+		pos_X = posRect.x;
+	}
+
+	if(posRect.x > 1024 - posRect.w)
+	{
+		posRect.x = 1024 - posRect.w;
+		pos_X = posRect.x;
+	}
+
+	if(posRect.y < 0)
+	{
+		posRect.y = 0;
+		pos_Y = posRect.y;
+	}
+
+	if(posRect.y > 768 - posRect.h)
+	{
+		posRect.y = 768 - posRect.h;
+		pos_Y = posRect.y;
+	}
+
+	for(int i = 0; i < bulletList.size(); i++)
+	{
+		if(bulletList[i].active)
+		{
+			bulletList[i].Update(deltaTime);
+		}
+	}
+}
+
+void Player::Draw(SDL_Renderer *renderer)
+{
+	SDL_RenderCopy(renderer, texture, NULL, &posRect);
+
+	for(int i = 0; i < bulletList.size(); i++)
+	{
+		if(bulletList[i].active)
+		{
+			bulletList[i].Draw(renderer);
+		}
 	}
 }
 
