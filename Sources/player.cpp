@@ -10,11 +10,11 @@ Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float
 
 	if(PlayerNum == 0)
 	{
-		PlayerPath = filePath + "/TestPlayer1.png";
+		PlayerPath = filePath + "/Player1.png";
 	}
 	else
 	{
-		PlayerPath = filePath + "/TestPlayer2.png";
+		PlayerPath = filePath + "/Player2.png";
 	}
 
 	surface = IMG_Load(PlayerPath.c_str());
@@ -54,7 +54,7 @@ Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float
 
 	for(int i = 0; i < 10; i++)
 	{
-		Bullet tmpBullet(renderer, bulletPath, -1000, -1000);
+		Bullet tmpBullet(renderer, bulletPath, 500, 500);
 
 		bulletList.push_back(tmpBullet);
 	}
@@ -68,6 +68,7 @@ void Player::CreateBullet()
 		{
 			bulletList[i].active = true;
 			bulletList[i].posRect.x = (pos_X + (posRect.w/2));
+
 			bulletList[i].posRect.x = (bulletList[i].posRect.x - (bulletList[i].posRect.w/2));
 
 			bulletList[i].posRect.y = posRect.y;
@@ -178,11 +179,11 @@ void Player::OnControllerAxis(const SDL_ControllerAxisEvent event)
 
 void Player::Update(float deltaTime)
 {
-	pos_X += (speed *xDir) * deltaTime;
-	pos_Y += (speed *yDir) * deltaTime;
+	pos_X += (speed * xDir) * deltaTime;
+	pos_Y += (speed * yDir) * deltaTime;
 
-	posRect.x = (int)(pos_X + 0.05f);
-	posRect.y = (int)(pos_Y + 0.05f);
+	posRect.x = (int)(pos_X + 0.5f);
+	posRect.y = (int)(pos_Y + 0.5f);
 
 	if(posRect.x < 0)
 	{

@@ -7,17 +7,15 @@
 
 #if defined (_WIN32) || (_WIN64)
 
-	#include "SDL.h"
-	#include "SDL_image.h"
-	#include <direct.h>
-	#define getcwd _getcwd
+	#include <SDL.h>
+	#include <SDL_image.h>
 
 #endif
 
 #if defined(__APPLE__)
 
-	#include "SDL2/SDL.h"
-	#include "SDL2_image/SDL_image.h"
+	#include <SDL2/SDL.h>
+	#include <SDL2_image/SDL_image.h>
 
 #endif
 
@@ -25,7 +23,6 @@
 
 	#include "SDL2/SDL.h"
 	#include "SDL2/SDL_image.h"
-
 #endif
 
 #if defined (_linux_)
@@ -296,7 +293,7 @@ int main(int argc, char* argv[]) {
    titlePos.h = 252;
 
    //********MAke 1 Player***********
-  string Play1path = s_cwd_images + "/Player1.png";
+  string Play1path = s_cwd_images + "/Player1Button_Hyo.png";
 
   surface = IMG_Load(Play1path.c_str());
 
@@ -312,7 +309,7 @@ int main(int argc, char* argv[]) {
   Play1Pos.h = 100;
 
    //********MAke 2 Player***********
-  string Play2path = s_cwd_images + "/Player2.png";
+  string Play2path = s_cwd_images + "/Player2Button_Hyo.png";
 
     surface = IMG_Load(Play2path.c_str());
 
@@ -586,7 +583,6 @@ int main(int argc, char* argv[]) {
     //boolean values to control movement through states
     bool menu, instructions, players1, players2, win, lose, quit = false;
 
-    // The window is open: could enter program loop here (see SDL_PollEvent())
     while(!quit)
     {
     	switch (gameState)

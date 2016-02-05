@@ -19,6 +19,11 @@ Bullet::Bullet(SDL_Renderer *renderer, string filepath, float x, float y)
 
 	texture = SDL_CreateTextureFromSurface(renderer, surface);
 
+    if (texture == NULL) {
+        // In the case that the window could not be made...
+        printf("Could not create bullet: %s\n", SDL_GetError());
+    }
+
 	SDL_FreeSurface(surface);
 
 	int w, h;
@@ -59,6 +64,6 @@ void Bullet::Draw(SDL_Renderer *renderer)
 
 Bullet::~Bullet()
 {
-	SDL_DestroyTexture(texture);
+	//SDL_DestroyTexture(texture);
 }
 
