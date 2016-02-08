@@ -9,6 +9,7 @@
 
 	#include <SDL.h>
 	#include <SDL_image.h>
+	//#define getcwd _getcwd
 
 #endif
 
@@ -31,8 +32,10 @@
 
 #include <stdio.h>
 #include <iostream>
-//#define getcwd _getcwd
+#include <direct.h>
 using namespace std;
+
+#define getcwd _getcwd
 
 //create the SDL_Rectangle for the texture's position and size -x,y,w,h
 SDL_Rect bkgd1Pos;

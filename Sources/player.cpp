@@ -74,7 +74,7 @@ void Player::CreateBullet()
 			bulletList[i].posRect.y = posRect.y;
 
 			bulletList[i].pos_X = pos_X;
-			bulletList[i].pos_X = pos_Y;
+			bulletList[i].pos_Y = pos_Y;
 
 			break;
 		}
