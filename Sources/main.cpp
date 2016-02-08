@@ -9,7 +9,8 @@
 
 	#include <SDL.h>
 	#include <SDL_image.h>
-	//#define getcwd _getcwd
+	#include <SDL_mixer.h>
+	#include <direct.h>
 
 #endif
 
@@ -17,6 +18,7 @@
 
 	#include <SDL2/SDL.h>
 	#include <SDL2_image/SDL_image.h>
+	#include <SDL2_mixer/SDL_mixer.h>
 
 #endif
 
@@ -24,6 +26,8 @@
 
 	#include "SDL2/SDL.h"
 	#include "SDL2/SDL_image.h"
+	#include "SDL2/SDL_mixer.h"
+
 #endif
 
 #if defined (_linux_)
@@ -32,10 +36,9 @@
 
 #include <stdio.h>
 #include <iostream>
-#include <direct.h>
 using namespace std;
 
-#define getcwd _getcwd
+//#define getcwd _getcwd
 
 //create the SDL_Rectangle for the texture's position and size -x,y,w,h
 SDL_Rect bkgd1Pos;
@@ -186,6 +189,7 @@ int main(int argc, char* argv[]) {
 
 	//create a string linking to the mac's images folder
 	string s_cwd_images = s_cwd + "\\Resources\\Images\\";
+	string audio_dir = s_cwd + "\\Resources\\Audio\\";
 
 #endif
 
@@ -198,6 +202,7 @@ int main(int argc, char* argv[]) {
 
 	//create a string linking to the mac's images folder
 	string s_cwd_images = s_cwd + "/Resources/Images";
+	string audio_dir = s_cwd + "/Resources/Audio";
 
 #endif
 
@@ -209,6 +214,8 @@ int main(int argc, char* argv[]) {
 
 	//create a string linking to the mac's images folder
 	string s_cwd_images = s_cwd + "/Resources/Images";
+
+	string audio_dir = s_cwd + "/Resources/Audio";
 
 	//test
 	cout << s_cwd_images << endl;
@@ -241,9 +248,6 @@ int main(int argc, char* argv[]) {
 
     //create the renderer
     renderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
-
-    Player player1 = Player(renderer, 0, s_cwd_images.c_str(), 250.0, 500.0);
-    Player player2 = Player(renderer, 1, s_cwd_images.c_str(), 750.0, 500.0);
 
     //******Create BackGround******
     string BKGDpath = s_cwd_images + "/Hyo.png";
@@ -586,11 +590,29 @@ int main(int argc, char* argv[]) {
     //boolean values to control movement through states
     bool menu, instructions, players1, players2, win, lose, quit = false;
 
+    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+
+//    Mix_Music *bgm = Mix_LoadMUS((audio_dir + "background.mp3").c_str());
+//
+//    if(!Mix_PlayingMusic())
+//    {
+//    	Mix_PlayMusic(bgm, -1);
+//    }
+
+    Mix_Chunk *overSound = Mix_LoadWAV((audio_dir + "over.wav").c_str());
+    Mix_Chunk *pressedSound = Mix_LoadWAV((audio_dir + "pressed.wav").c_str());
+
+    bool alreadyOver = false;
+
+    Player player1 = Player(renderer, 0, s_cwd_images.c_str(), audio_dir.c_str(), 250.0, 500.0);
+    Player player2 = Player(renderer, 1, s_cwd_images.c_str(), audio_dir.c_str(), 750.0, 500.0);
+
     while(!quit)
     {
     	switch (gameState)
     	{
     	case MENU:
+    		alreadyOver = false;
     		menu = true;
     		cout << "The GameState is Menu" << endl;
     		cout << "Press the A button for instructions" << endl;
@@ -627,6 +649,7 @@ int main(int argc, char* argv[]) {
     						{
     							if(players1Over)
     							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
     								menu = false;
     								gameState = PLAYERS1;
     								players1Over = false;
@@ -634,6 +657,7 @@ int main(int argc, char* argv[]) {
 
     							if(players2Over)
     							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
     								menu = false;
     								gameState = PLAYERS2;
     								players2Over = false;
@@ -641,6 +665,7 @@ int main(int argc, char* argv[]) {
 
     							if(instructionsOver)
     							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
     								menu = false;
     								gameState = INSTRUCTIONS;
     								players1Over = false;
@@ -648,9 +673,11 @@ int main(int argc, char* argv[]) {
 
     							if(quitOver)
     							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								SDL_Delay(200);
     								menu = false;
     								quit = true;
-    								players1Over = false;
+    								quitOver = false;
     							}
     						}
     					}
@@ -670,6 +697,20 @@ int main(int argc, char* argv[]) {
     			players2Over = SDL_HasIntersection(&activePos, &Play2Pos);
     			instructionsOver = SDL_HasIntersection(&activePos, &inPos);
     			quitOver = SDL_HasIntersection(&activePos, &quitPos);
+
+    			if(players1Over || players2Over || instructionsOver || quitOver)
+    			{
+    				if(alreadyOver == false)
+    				{
+    					Mix_PlayChannel(-1, overSound, 0);
+    					alreadyOver = true;
+    				}
+    			}
+
+    			if(!players1Over && !players2Over && !instructionsOver && !quitOver)
+    			{
+    				alreadyOver = false;
+    			}
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -726,6 +767,7 @@ int main(int argc, char* argv[]) {
     		break; //end main menu case
 
     	case INSTRUCTIONS:
+    		alreadyOver = false;
     		instructions = true;
     		cout << "The GameState is Instructions" << endl;
     		cout << "Press the A button for Main Menu" << endl;
@@ -755,8 +797,13 @@ int main(int argc, char* argv[]) {
     					{
     						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
     						{
+    							if(menuOver)
+    							{
+        						Mix_PlayChannel(-1, pressedSound, 0);
     							instructions = false;
     							gameState = MENU;
+    							menuOver = false;
+    							}
     						}
     					}
     					break;
@@ -772,6 +819,20 @@ int main(int argc, char* argv[]) {
     			UpdateCursor(deltaTime);
 
     			menuOver = SDL_HasIntersection(&activePos, &menuPos);
+
+    			if(menuOver)
+    			{
+    				if(alreadyOver == false)
+    				{
+    					Mix_PlayChannel(-1, overSound, 0);
+    					alreadyOver = true;
+    				}
+    			}
+
+    			if(!menuOver)
+    			{
+    				alreadyOver = false;
+    			}
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -802,6 +863,7 @@ int main(int argc, char* argv[]) {
     		break; //end instructions case
 
     	case PLAYERS1:
+    		alreadyOver = false;
     		players1 = true;
     		cout << "The GameState is 1 Player Game" << endl;
     		cout << "Press the A button for Win screen" << endl;
@@ -853,7 +915,7 @@ int main(int argc, char* argv[]) {
     			//Update
     			UpdateBackground();
 
-    			player1.Update(deltaTime);
+    			player1.Update(deltaTime, renderer);
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -873,6 +935,7 @@ int main(int argc, char* argv[]) {
     		break; //end players1 case
 
     	case PLAYERS2:
+    		alreadyOver = false;
     		players2 = true;
     		cout << "The GameState is 2 Player Game" << endl;
     		cout << "Press the A button for Win screen" << endl;
@@ -930,8 +993,8 @@ int main(int argc, char* argv[]) {
     			//Update
     			UpdateBackground();
 
-    			player1.Update(deltaTime);
-    			player2.Update(deltaTime);
+    			player1.Update(deltaTime, renderer);
+    			player2.Update(deltaTime, renderer);
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -953,6 +1016,7 @@ int main(int argc, char* argv[]) {
     		break; //end players2 case
 
     	case WIN:
+    		alreadyOver = false;
     		win = true;
     		cout << "The GameState is Win Screen" << endl;
     		cout << "Press the A button for Main Menu" << endl;
@@ -983,15 +1047,27 @@ int main(int argc, char* argv[]) {
 						{
 							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
 							{
+								if(menuOver)
+								{
+								Mix_PlayChannel(-1, pressedSound, 0);
 								win = false;
 								gameState = MENU;
+								}
+
+								if(playOver)
+								{
+									Mix_PlayChannel(-1, pressedSound, 0);
+									win = false;
+									gameState = PLAYERS1;
+									playOver = false;
+								}
 							}
 
-							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-							{
-								win = false;
-								quit = true;
-							}
+//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+//							{
+//								win = false;
+//								quit = true;
+//							}
 						}
 						break;
 
@@ -1007,6 +1083,20 @@ int main(int argc, char* argv[]) {
 
 				menuOver = SDL_HasIntersection(&activePos, &menuPos);
 				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
+
+				if(menuOver || playOver)
+				{
+					if(alreadyOver == false)
+					{
+						Mix_PlayChannel(-1, overSound, 0);
+						alreadyOver = true;
+					}
+				}
+
+				if(!menuOver && !playOver)
+				{
+					alreadyOver = false;
+				}
 
 				//Start Drawing
 				//Clear SDL renderer
@@ -1045,6 +1135,7 @@ int main(int argc, char* argv[]) {
     		break; //end win case
 
     	case LOSE:
+    		alreadyOver = false;
     		lose = true;
     		cout << "The GameState is Lose Screen" << endl;
     		cout << "Press the A button for Main Menu" << endl;
@@ -1075,15 +1166,28 @@ int main(int argc, char* argv[]) {
 						{
 							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
 							{
-								lose = false;
-								gameState = MENU;
+								if(menuOver)
+								{
+									Mix_PlayChannel(-1, pressedSound, 0);
+									lose = false;
+									gameState = MENU;
+									menuOver = false;
+								}
+
+								if(playOver)
+								{
+									Mix_PlayChannel(-1, pressedSound, 0);
+									lose = false;
+									gameState = PLAYERS1;
+									playOver = false;
+								}
 							}
 
-							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-							{
-								lose = false;
-								quit = true;
-							}
+//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+//							{
+//								lose = false;
+//								quit = true;
+//							}
 						}
 						break;
 
@@ -1099,6 +1203,20 @@ int main(int argc, char* argv[]) {
 
 				menuOver = SDL_HasIntersection(&activePos, &menuPos);
 				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
+
+				if(menuOver || playOver)
+				{
+					if(alreadyOver == false)
+					{
+						Mix_PlayChannel(-1, overSound, 0);
+						alreadyOver = true;
+					}
+				}
+
+				if(!menuOver && !playOver)
+				{
+					alreadyOver = false;
+				}
 
 				//Start Drawing
 				//Clear SDL renderer

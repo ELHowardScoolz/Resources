@@ -2,11 +2,38 @@
 
 const int JOYSTICK_DEAD_ZONE = 8000;
 
-Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float y)
+Player::Player(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, float x, float y)
 {
 	PlayerNum = pNum;
 
 	speed = 500.0f;
+
+	laser = Mix_LoadWAV((audioPath + "laser.wav").c_str());
+
+	oldScore = 0;
+	playerScore = 0;
+	oldLives = 0;
+	playerLives = 3;
+
+	TTF_Init();
+
+	font = TTF_OpenFont((audioPath + "shanghai.ttf").c_str(), 40);
+
+	if(PlayerNum == 0)
+	{
+		scorePos.x = scorePos.y = 10;
+		livesPos.x = 10;
+		livesPos.y = 40;
+	}
+	else
+	{
+		scorePos.x = 650;
+		scorePos.y = 10;
+		livesPos.x = 650;
+		livesPos.y = 40;
+	}
+
+	Update(deltaTime, renderer);
 
 	if(PlayerNum == 0)
 	{
@@ -60,12 +87,41 @@ Player::Player(SDL_Renderer *renderer, int pNum, string filePath, float x, float
 	}
 }
 
+void Player::UpdateScore(SDL_Renderer *renderer)
+{
+	string Result;
+	ostringstream convert;
+	convert << playerScore;
+	Result = convert.c_str();
+
+	tempScore = "Player Score: " + Result;
+
+	if(PlayerNum == 0)
+	{
+		scoreSurface = TTF_RenderText_Solid(font, tempScore.c_str(), colorP1);
+	}
+	else
+	{
+		scoreSurface = TTF_RenderText_Solid(font, tempScore.c_str(), colorP2);
+	}
+
+	scoreTexture = SDL_CreateTextureFromSurface(renderer, scoreSurface);
+
+	SDL_QueryTexture(scoreTexture, NULL, NULL, &scorePos.w, &scorePos.h);
+
+	SDL_FreeSurface(scoreSurface);
+
+	oldScore = playerScore;
+}
+
 void Player::CreateBullet()
 {
 	for(int i = 0; i < bulletList.size(); i++)
 	{
 		if(bulletList[i].active == false)
 		{
+			Mix_PlayChannel(-1, laser, 0);
+
 			bulletList[i].active = true;
 			bulletList[i].posRect.x = (pos_X + (posRect.w/2));
 
@@ -177,7 +233,7 @@ void Player::OnControllerAxis(const SDL_ControllerAxisEvent event)
 	}
 }
 
-void Player::Update(float deltaTime)
+void Player::Update(float deltaTime, SDL_Renderer *renderer)
 {
 	pos_X += (speed * xDir) * deltaTime;
 	pos_Y += (speed * yDir) * deltaTime;
@@ -216,6 +272,11 @@ void Player::Update(float deltaTime)
 			bulletList[i].Update(deltaTime);
 		}
 	}
+
+	if(playerScore != oldScore)
+	{
+		UpdateScore(renderer);
+	}
 }
 
 void Player::Draw(SDL_Renderer *renderer)
@@ -229,6 +290,8 @@ void Player::Draw(SDL_Renderer *renderer)
 			bulletList[i].Draw(renderer);
 		}
 	}
+
+	SDL_RenderCopy(renderer, scoreTexture, NULL, &scorePos);
 }
 
 
