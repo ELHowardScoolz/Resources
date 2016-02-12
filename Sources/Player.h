@@ -37,12 +37,14 @@ class Player
 {
 public:
 
+	bool active;
+
 	int playerScore, oldScore, playerLives, oldLives;
 
 	TTF_Font *font;
 
-	SDL_Color colorP1 = {0, 255, 0, 255};
-	SDL_Color colorP2 = {0, 0, 225, 255};
+	SDL_Color colorP1;
+	SDL_Color colorP2;
 
 	SDL_Surface *scoreSurface, *livesSurface;
 	SDL_Texture *scoreTexture, *livesTexture;
@@ -82,9 +84,13 @@ public:
 
 	void OnControllerButton(const SDL_ControllerButtonEvent event);
 
+	~Player();
+
 	void UpdateScore(SDL_Renderer *renderer);
 
-	~Player();
+	void UpdateLives(SDL_Renderer *renderer);
+
+	void Reset();
 
 private:
 

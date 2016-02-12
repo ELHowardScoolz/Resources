@@ -1,32 +1,27 @@
-#if defined (_WIN32) || (_WIN64)
-
+#if defined (_WIN32_) || (_WIN64_)
 	#include <SDL.h>
 	#include <SDL_image.h>
-
 #endif
 
-#if defined(__APPLE__)
-
+#if defined (__APPLE__)
 	#include <SDL2/SDL.h>
 	#include <SDL2_image/SDL_image.h>
-
 #endif
 
-#if defined(__linux__)
-
-	#include "SDL2/SDL.h"
-	#include "SDL2/SDL_image.h"
-
+#if defined (__linux__)
+	#include <SDL2/SDL.h>
+	#include <SDL2/SDL_image.h>
 #endif
 
-#include <stdio.h>
+#include <string>
 #include <iostream>
 using namespace std;
 
-class Bullet{
+#include <stdlib.h>
 
+class Enemy
+{
 public:
-
 	bool active;
 
 	SDL_Texture *texture;
@@ -34,12 +29,13 @@ public:
 	SDL_Rect posRect;
 
 	float xDir, yDir;
-
 	float speed;
-
 	float pos_X, pos_Y;
+	float angle;
 
-	Bullet(SDL_Renderer *renderer, string filePath, float x, float y);
+	SDL_Point center;
+
+	Enemy(SDL_Renderer *renderer, string filePath);
 
 	void Update(float deltaTime);
 
@@ -47,5 +43,5 @@ public:
 
 	void Reset();
 
-	~Bullet();
+	~Enemy();
 };

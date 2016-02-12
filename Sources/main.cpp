@@ -179,7 +179,16 @@ bool players1Over = false, players2Over = false, instructionsOver = false, quitO
 
 #include "Player.h"
 
+#include "enemy.h"
+#include <vector>
+#include <stdlib.h>
+#include <time.h>
+
+vector<Enemy> enemyList;
+
 int main(int argc, char* argv[]) {
+
+srand(time(NULL));
 
 #if defined (_WIN32) || (_WIN64)
 
@@ -599,8 +608,9 @@ int main(int argc, char* argv[]) {
 //    	Mix_PlayMusic(bgm, -1);
 //    }
 
-    Mix_Chunk *overSound = Mix_LoadWAV((audio_dir + "over.wav").c_str());
-    Mix_Chunk *pressedSound = Mix_LoadWAV((audio_dir + "pressed.wav").c_str());
+    Mix_Chunk *overSound = Mix_LoadWAV((audio_dir + "/over.wav").c_str());
+    Mix_Chunk *pressedSound = Mix_LoadWAV((audio_dir + "/pressed.wav").c_str());
+    Mix_Chunk *explosionSound = Mix_LoadWAV((audio_dir + "/explosion.wav").c_str());
 
     bool alreadyOver = false;
 
@@ -863,12 +873,18 @@ int main(int argc, char* argv[]) {
     		break; //end instructions case
 
     	case PLAYERS1:
+
+    		enemyList.clear();
+    		player1.Reset();
     		alreadyOver = false;
     		players1 = true;
-    		cout << "The GameState is 1 Player Game" << endl;
-    		cout << "Press the A button for Win screen" << endl;
-    		cout << "Press the B button for Lose screen" << endl;
-    		cout << endl;
+
+    		for(int i = 0; i < 6; i++)
+    		{
+    			Enemy tmpEnemy(renderer, s_cwd_images);
+
+    			enemyList.push_back(tmpEnemy);
+    		}
 
     		while (players1)
     		{
@@ -903,19 +919,71 @@ int main(int argc, char* argv[]) {
     							players1 = false;
     							gameState = LOSE;
     						}
+    						if(player1.active)
+    						{
     						player1.OnControllerButton(event.cbutton);
+    						}
     					}
     					break;
 
     				case SDL_CONTROLLERAXISMOTION:
+    					if(player1.active)
+    					{
     					player1.OnControllerAxis(event.caxis);
+    					}
     					break;
     				}
     			}
     			//Update
     			UpdateBackground();
 
+    			if(player1.active)
+    			{
     			player1.Update(deltaTime, renderer);
+    			}
+
+    			for(int i = 0; i < enemyList.size(); i++)
+    			{
+    				enemyList[i].Update(deltaTime);
+    			}
+
+    			//Check to see if Player 1 is active
+    			if(player1.active == true)
+    			{
+    				for (int i = 0; i < player1.bulletList.size(); i ++)
+    				{
+    					if(player1.bulletList[i].active == true)
+    					{
+    						for (int j = 0; j < enemyList.size(); j++)
+    						{
+    							if (SDL_HasIntersection(&player1.bulletList[i].posRect, &enemyList[j].posRect))
+    							{
+    								Mix_PlayChannel(-1, explosionSound, 0);
+    								enemyList[j].Reset();
+    								player1.bulletList[i].Reset();
+    								player1.playerScore += 50;
+    							}
+    						}
+    					}
+    				}
+
+    				for(int i = 0; i < enemyList.size(); i++)
+    				{
+    					if(SDL_HasIntersection(&player1.posRect, &enemyList[i].posRect))
+    					{
+    						Mix_PlayChannel(-1, explosionSound, 0);
+    						enemyList[i].Reset();
+    						player1.playerLives -= 1;
+
+    						if(player1.playerLives <= 0)
+    						{
+    							players1 = false;
+    							gameState = LOSE;
+    							break;
+    						}
+    					}
+    				}
+    			}
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -927,6 +995,11 @@ int main(int argc, char* argv[]) {
 
     			SDL_RenderCopy(renderer, Play1, NULL, &Play1Pos);
 
+    			for(int i = 0; i < enemyList.size(); i++)
+    			{
+    				enemyList[i].Draw(renderer);
+    			}
+
     			player1.Draw(renderer);
 
     			//SDL Render present
@@ -935,12 +1008,17 @@ int main(int argc, char* argv[]) {
     		break; //end players1 case
 
     	case PLAYERS2:
+    		enemyList.clear();
+    		player1.Reset();
+    		player2.Reset();
     		alreadyOver = false;
     		players2 = true;
-    		cout << "The GameState is 2 Player Game" << endl;
-    		cout << "Press the A button for Win screen" << endl;
-    		cout << "Press the B button for Lose screen" << endl;
-    		cout << endl;
+
+    		for (int i = 0; i < 12; i++)
+    		{
+    			Enemy tmpEnemy(renderer, s_cwd_images);
+    			enemyList.push_back(tmpEnemy);
+    		}
 
     		while (players2)
     		{
@@ -978,23 +1056,127 @@ int main(int argc, char* argv[]) {
     						}
     					}
 
+    					if(player1.active)
+    					{
     					player1.OnControllerButton(event.cbutton);
+    					}
 
+    					if(player2.active)
+    					{
     					player2.OnControllerButton(event.cbutton);
+    					}
 
     					break;
 
     				case SDL_CONTROLLERAXISMOTION:
+
+    					if(player1.active)
+    					{
     					player1.OnControllerAxis(event.caxis);
+    					}
+
+    					if(player2.active)
+    					{
     					player2.OnControllerAxis(event.caxis);
+    					}
     				}
     			}
 
     			//Update
     			UpdateBackground();
 
+    			if(player1.active)
+    			{
     			player1.Update(deltaTime, renderer);
+    			}
+
+    			if(player2.active)
+    			{
     			player2.Update(deltaTime, renderer);
+    			}
+
+    			for (int i = 0; i < enemyList.size(); i++)
+    			{
+    				enemyList[i].Update(deltaTime);
+    			}
+
+    			//Check to see if Player 1 is active
+    			if(player1.active == true)
+    			{
+    				for (int i = 0; i < player1.bulletList.size(); i ++)
+    				{
+    					if(player1.bulletList[i].active == true)
+    					{
+    						for (int j = 0; j < enemyList.size(); j++)
+    						{
+    							if (SDL_HasIntersection(&player1.bulletList[i].posRect, &enemyList[j].posRect))
+    							{
+    								Mix_PlayChannel(-1, explosionSound, 0);
+    								enemyList[j].Reset();
+    								player1.bulletList[i].Reset();
+    								player1.playerScore += 50;
+    							}
+    						}
+    					}
+    				}
+
+    				for(int i = 0; i < enemyList.size(); i++)
+    				{
+    					if(SDL_HasIntersection(&player1.posRect, &enemyList[i].posRect))
+    					{
+    						Mix_PlayChannel(-1, explosionSound, 0);
+    						enemyList[i].Reset();
+    						player1.playerLives -= 1;
+
+    						if(player1.playerLives <= 0 && player2.playerLives <= 0)
+    						{
+    							players2 = false;
+    							gameState = LOSE;
+    							break;
+    						}
+    					}
+    				}
+    			}
+    			//End check of PLAYER 1
+
+    			//Check to see if Player 2 is active
+    			if(player2.active == true)
+    			{
+    				for (int i = 0; i < player2.bulletList.size(); i ++)
+    				{
+    					if(player2.bulletList[i].active == true)
+    					{
+    						for (int j = 0; j < enemyList.size(); j++)
+    						{
+    							if (SDL_HasIntersection(&player2.bulletList[i].posRect, &enemyList[j].posRect))
+    							{
+    								Mix_PlayChannel(-1, explosionSound, 0);
+    								enemyList[j].Reset();
+    								player2.bulletList[i].Reset();
+    								player2.playerScore += 50;
+    							}
+    						}
+    					}
+    				}
+
+    				for(int i = 0; i < enemyList.size(); i++)
+    				{
+    					if(SDL_HasIntersection(&player2.posRect, &enemyList[i].posRect))
+    					{
+    						Mix_PlayChannel(-1, explosionSound, 0);
+    						enemyList[i].Reset();
+    						player2.playerLives -= 1;
+
+    						if(player1.playerLives <= 0 && player2.playerLives <= 0)
+    						{
+    							players2 = false;
+    							gameState = LOSE;
+    							break;
+    						}
+    					}
+    				}
+    			}
+    			//End check of PLAYER 2
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -1005,6 +1187,11 @@ int main(int argc, char* argv[]) {
     			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
     			SDL_RenderCopy(renderer, Play2, NULL, &Play2Pos);
+
+    			for (int i = 0; i < enemyList.size(); i++)
+    			{
+    				enemyList[i].Draw(renderer);
+    			}
 
     			player1.Draw(renderer);
 
