@@ -183,8 +183,25 @@ bool players1Over = false, players2Over = false, instructionsOver = false, quitO
 #include <vector>
 #include <stdlib.h>
 #include <time.h>
+#include "explode.h"
 
 vector<Enemy> enemyList;
+vector<Explode> explodeList;
+
+void MakeExplosion(int x, int y)
+{
+	cout << "Explosion being Called" << endl;
+	for(int i = 0; i < explodeList.size(); i++)
+	{
+		if(explodeList[i].active == false)
+		{
+			explodeList[i].active = true;
+			explodeList[i].posRect.x = x;
+			explodeList[i].posRect.y = y;
+			break;
+		}
+	}
+}
 
 int main(int argc, char* argv[]) {
 
@@ -617,6 +634,12 @@ srand(time(NULL));
     Player player1 = Player(renderer, 0, s_cwd_images.c_str(), audio_dir.c_str(), 250.0, 500.0);
     Player player2 = Player(renderer, 1, s_cwd_images.c_str(), audio_dir.c_str(), 750.0, 500.0);
 
+    for(int i = 0; i < 20; i++)
+    {
+    	Explode tmpExplode(renderer, s_cwd_images, 500, 500);
+    	explodeList.push_back(tmpExplode);
+    }
+
     while(!quit)
     {
     	switch (gameState)
@@ -809,10 +832,10 @@ srand(time(NULL));
     						{
     							if(menuOver)
     							{
-        						Mix_PlayChannel(-1, pressedSound, 0);
-    							instructions = false;
-    							gameState = MENU;
-    							menuOver = false;
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								instructions = false;
+    								gameState = MENU;
+    								menuOver = false;
     							}
     						}
     					}
@@ -868,7 +891,7 @@ srand(time(NULL));
     			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
 
     			//SDL Render present
-				SDL_RenderPresent(renderer);
+    			SDL_RenderPresent(renderer);
     		}
     		break; //end instructions case
 
@@ -921,7 +944,7 @@ srand(time(NULL));
     						}
     						if(player1.active)
     						{
-    						player1.OnControllerButton(event.cbutton);
+    							player1.OnControllerButton(event.cbutton);
     						}
     					}
     					break;
@@ -929,7 +952,7 @@ srand(time(NULL));
     				case SDL_CONTROLLERAXISMOTION:
     					if(player1.active)
     					{
-    					player1.OnControllerAxis(event.caxis);
+    						player1.OnControllerAxis(event.caxis);
     					}
     					break;
     				}
@@ -939,7 +962,7 @@ srand(time(NULL));
 
     			if(player1.active)
     			{
-    			player1.Update(deltaTime, renderer);
+    				player1.Update(deltaTime, renderer);
     			}
 
     			for(int i = 0; i < enemyList.size(); i++)
@@ -959,9 +982,16 @@ srand(time(NULL));
     							if (SDL_HasIntersection(&player1.bulletList[i].posRect, &enemyList[j].posRect))
     							{
     								Mix_PlayChannel(-1, explosionSound, 0);
+    								MakeExplosion(enemyList[j].posRect.x, enemyList[j].posRect.y);
     								enemyList[j].Reset();
     								player1.bulletList[i].Reset();
     								player1.playerScore += 50;
+
+    								if(player1.playerScore >= 1000)
+    								{
+    									players1 = false;
+    									gameState = WIN;
+    								}
     							}
     						}
     					}
@@ -972,6 +1002,7 @@ srand(time(NULL));
     					if(SDL_HasIntersection(&player1.posRect, &enemyList[i].posRect))
     					{
     						Mix_PlayChannel(-1, explosionSound, 0);
+    						MakeExplosion(player1.posRect.x-32, player1.posRect.y-32);
     						enemyList[i].Reset();
     						player1.playerLives -= 1;
 
@@ -982,6 +1013,15 @@ srand(time(NULL));
     							break;
     						}
     					}
+    				}
+    			}
+    			//Check end for PLAYER 1
+
+    			for(int i = 0; i < explodeList.size(); i++)
+    			{
+    				if(explodeList[i].active == true)
+    				{
+    					explodeList[i].Update(deltaTime);
     				}
     			}
 
@@ -1058,12 +1098,12 @@ srand(time(NULL));
 
     					if(player1.active)
     					{
-    					player1.OnControllerButton(event.cbutton);
+    						player1.OnControllerButton(event.cbutton);
     					}
 
     					if(player2.active)
     					{
-    					player2.OnControllerButton(event.cbutton);
+    						player2.OnControllerButton(event.cbutton);
     					}
 
     					break;
@@ -1072,12 +1112,12 @@ srand(time(NULL));
 
     					if(player1.active)
     					{
-    					player1.OnControllerAxis(event.caxis);
+    						player1.OnControllerAxis(event.caxis);
     					}
 
     					if(player2.active)
     					{
-    					player2.OnControllerAxis(event.caxis);
+    						player2.OnControllerAxis(event.caxis);
     					}
     				}
     			}
@@ -1087,12 +1127,12 @@ srand(time(NULL));
 
     			if(player1.active)
     			{
-    			player1.Update(deltaTime, renderer);
+    				player1.Update(deltaTime, renderer);
     			}
 
     			if(player2.active)
     			{
-    			player2.Update(deltaTime, renderer);
+    				player2.Update(deltaTime, renderer);
     			}
 
     			for (int i = 0; i < enemyList.size(); i++)
@@ -1115,6 +1155,11 @@ srand(time(NULL));
     								enemyList[j].Reset();
     								player1.bulletList[i].Reset();
     								player1.playerScore += 50;
+    								if(player1.playerScore >= 1000)
+    								{
+    									players2 = false;
+    									gameState = WIN;
+    								}
     							}
     						}
     					}
@@ -1125,6 +1170,7 @@ srand(time(NULL));
     					if(SDL_HasIntersection(&player1.posRect, &enemyList[i].posRect))
     					{
     						Mix_PlayChannel(-1, explosionSound, 0);
+    						MakeExplosion(player1.posRect.x-32, player1.posRect.y-32);
     						enemyList[i].Reset();
     						player1.playerLives -= 1;
 
@@ -1151,9 +1197,15 @@ srand(time(NULL));
     							if (SDL_HasIntersection(&player2.bulletList[i].posRect, &enemyList[j].posRect))
     							{
     								Mix_PlayChannel(-1, explosionSound, 0);
+    								MakeExplosion(enemyList[j].posRect.x, enemyList[j].posRect.y);
     								enemyList[j].Reset();
     								player2.bulletList[i].Reset();
     								player2.playerScore += 50;
+    								if(player2.playerScore >= 1000)
+    								{
+    									players2 = false;
+    									gameState = WIN;
+    								}
     							}
     						}
     					}
@@ -1164,6 +1216,7 @@ srand(time(NULL));
     					if(SDL_HasIntersection(&player2.posRect, &enemyList[i].posRect))
     					{
     						Mix_PlayChannel(-1, explosionSound, 0);
+    						MakeExplosion(player2.posRect.x-32, player2.posRect.y-32);
     						enemyList[i].Reset();
     						player2.playerLives -= 1;
 
@@ -1177,6 +1230,14 @@ srand(time(NULL));
     				}
     			}
     			//End check of PLAYER 2
+
+    			for(int i = 0; i < explodeList.size(); i++)
+    			{
+    				if(explodeList[i].active == true)
+    				{
+    					explodeList[i].Update(deltaTime);
+    				}
+    			}
 
     			//Start Drawing
     			//Clear SDL renderer
@@ -1216,108 +1277,108 @@ srand(time(NULL));
     			deltaTime = (float)(thisTime - lastTime) / 1000;
     			lastTime = thisTime;
     			//check for input events
-				if (SDL_PollEvent(&event))
-				{
-					//check to see if the SDL Window is closed - player clicks X in window
-					if(event.type == SDL_QUIT)
-					{
-						quit = true;
-						win = false;
-						break;
-					}
+    			if (SDL_PollEvent(&event))
+    			{
+    				//check to see if the SDL Window is closed - player clicks X in window
+    				if(event.type == SDL_QUIT)
+    				{
+    					quit = true;
+    					win = false;
+    					break;
+    				}
 
-					switch (event.type)
-					{
-					case SDL_CONTROLLERBUTTONDOWN:
-						if (event.cdevice.which == 0)
+    				switch (event.type)
+    				{
+    				case SDL_CONTROLLERBUTTONDOWN:
+    					if (event.cdevice.which == 0)
 
-						{
-							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-							{
-								if(menuOver)
-								{
-								Mix_PlayChannel(-1, pressedSound, 0);
-								win = false;
-								gameState = MENU;
-								}
+    					{
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+    						{
+    							if(menuOver)
+    							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								win = false;
+    								gameState = MENU;
+    							}
 
-								if(playOver)
-								{
-									Mix_PlayChannel(-1, pressedSound, 0);
-									win = false;
-									gameState = PLAYERS1;
-									playOver = false;
-								}
-							}
+    							if(playOver)
+    							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								win = false;
+    								gameState = PLAYERS1;
+    								playOver = false;
+    							}
+    						}
 
-//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-//							{
-//								win = false;
-//								quit = true;
-//							}
-						}
-						break;
+    						//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+    						//							{
+    						//								win = false;
+    						//								quit = true;
+    						//							}
+    					}
+    					break;
 
-					case SDL_CONTROLLERAXISMOTION:
-						moveCursor(event.caxis);
-						break;
-					}
-				}
+    				case SDL_CONTROLLERAXISMOTION:
+    					moveCursor(event.caxis);
+    					break;
+    				}
+    			}
 
-				//Update
-				UpdateBackground();
-				UpdateCursor(deltaTime);
+    			//Update
+    			UpdateBackground();
+    			UpdateCursor(deltaTime);
 
-				menuOver = SDL_HasIntersection(&activePos, &menuPos);
-				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
+    			menuOver = SDL_HasIntersection(&activePos, &menuPos);
+    			playOver = SDL_HasIntersection(&activePos, &PlaySPos);
 
-				if(menuOver || playOver)
-				{
-					if(alreadyOver == false)
-					{
-						Mix_PlayChannel(-1, overSound, 0);
-						alreadyOver = true;
-					}
-				}
+    			if(menuOver || playOver)
+    			{
+    				if(alreadyOver == false)
+    				{
+    					Mix_PlayChannel(-1, overSound, 0);
+    					alreadyOver = true;
+    				}
+    			}
 
-				if(!menuOver && !playOver)
-				{
-					alreadyOver = false;
-				}
+    			if(!menuOver && !playOver)
+    			{
+    				alreadyOver = false;
+    			}
 
-				//Start Drawing
-				//Clear SDL renderer
-				SDL_RenderClear(renderer);
-				//Draw the bkgd1 image
-				SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-				//Draw the bkgd2 image
-				SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    			//Start Drawing
+    			//Clear SDL renderer
+    			SDL_RenderClear(renderer);
+    			//Draw the bkgd1 image
+    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    			//Draw the bkgd2 image
+    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-				SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
+    			SDL_RenderCopy(renderer, winText, NULL, &winTextPos);
 
-				if(menuOver)
-				{
-					SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
-				}
-				else
-				{
-					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
-				}
+    			if(menuOver)
+    			{
+    				SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+    			}
+    			else
+    			{
+    				SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+    			}
 
-				if(playOver)
-				{
-					SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+    			if(playOver)
+    			{
+    				SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
 
-				}
-				else
-				{
-					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
-				}
+    			}
+    			else
+    			{
+    				SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+    			}
 
-				SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
 
-				//SDL Render present
-				SDL_RenderPresent(renderer);
+    			//SDL Render present
+    			SDL_RenderPresent(renderer);
     		}
     		break; //end win case
 
@@ -1335,109 +1396,109 @@ srand(time(NULL));
     			deltaTime = (float)(thisTime - lastTime) / 1000;
     			lastTime = thisTime;
     			//check for input events
-				if (SDL_PollEvent(&event))
-				{
-					//check to see if the SDL Window is closed - player clicks X in window
-					if(event.type == SDL_QUIT)
-					{
-						quit = true;
-						lose = false;
-						break;
-					}
+    			if (SDL_PollEvent(&event))
+    			{
+    				//check to see if the SDL Window is closed - player clicks X in window
+    				if(event.type == SDL_QUIT)
+    				{
+    					quit = true;
+    					lose = false;
+    					break;
+    				}
 
-					switch (event.type)
-					{
-					case SDL_CONTROLLERBUTTONDOWN:
-						if (event.cdevice.which == 0)
+    				switch (event.type)
+    				{
+    				case SDL_CONTROLLERBUTTONDOWN:
+    					if (event.cdevice.which == 0)
 
-						{
-							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
-							{
-								if(menuOver)
-								{
-									Mix_PlayChannel(-1, pressedSound, 0);
-									lose = false;
-									gameState = MENU;
-									menuOver = false;
-								}
+    					{
+    						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
+    						{
+    							if(menuOver)
+    							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								lose = false;
+    								gameState = MENU;
+    								menuOver = false;
+    							}
 
-								if(playOver)
-								{
-									Mix_PlayChannel(-1, pressedSound, 0);
-									lose = false;
-									gameState = PLAYERS1;
-									playOver = false;
-								}
-							}
+    							if(playOver)
+    							{
+    								Mix_PlayChannel(-1, pressedSound, 0);
+    								lose = false;
+    								gameState = PLAYERS1;
+    								playOver = false;
+    							}
+    						}
 
-//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
-//							{
-//								lose = false;
-//								quit = true;
-//							}
-						}
-						break;
+    						//							if(event.cbutton.button == SDL_CONTROLLER_BUTTON_B)
+    						//							{
+    						//								lose = false;
+    						//								quit = true;
+    						//							}
+    					}
+    					break;
 
-					case SDL_CONTROLLERAXISMOTION:
-						moveCursor(event.caxis);
-						break;
-					}
-				}
+    				case SDL_CONTROLLERAXISMOTION:
+    					moveCursor(event.caxis);
+    					break;
+    				}
+    			}
 
-				//Update
-				UpdateBackground();
-				UpdateCursor(deltaTime);
+    			//Update
+    			UpdateBackground();
+    			UpdateCursor(deltaTime);
 
-				menuOver = SDL_HasIntersection(&activePos, &menuPos);
-				playOver = SDL_HasIntersection(&activePos, &PlaySPos);
+    			menuOver = SDL_HasIntersection(&activePos, &menuPos);
+    			playOver = SDL_HasIntersection(&activePos, &PlaySPos);
 
-				if(menuOver || playOver)
-				{
-					if(alreadyOver == false)
-					{
-						Mix_PlayChannel(-1, overSound, 0);
-						alreadyOver = true;
-					}
-				}
+    			if(menuOver || playOver)
+    			{
+    				if(alreadyOver == false)
+    				{
+    					Mix_PlayChannel(-1, overSound, 0);
+    					alreadyOver = true;
+    				}
+    			}
 
-				if(!menuOver && !playOver)
-				{
-					alreadyOver = false;
-				}
+    			if(!menuOver && !playOver)
+    			{
+    				alreadyOver = false;
+    			}
 
-				//Start Drawing
-				//Clear SDL renderer
-				SDL_RenderClear(renderer);
-				//Draw the bkgd1 image
-				SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
-				//Draw the bkgd2 image
-				SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
+    			//Start Drawing
+    			//Clear SDL renderer
+    			SDL_RenderClear(renderer);
+    			//Draw the bkgd1 image
+    			SDL_RenderCopy(renderer, bkgd1, NULL, &bkgd1Pos);
+    			//Draw the bkgd2 image
+    			SDL_RenderCopy(renderer, bkgd2, NULL, &bkgd2Pos);
 
-				SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
+    			SDL_RenderCopy(renderer, loseText, NULL, &loseTextPos);
 
-				if(menuOver)
-				{
-					SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
-				}
-				else
-				{
-					SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
-				}
+    			if(menuOver)
+    			{
+    				SDL_RenderCopy(renderer, menuOff, NULL, &menuOffPos);
+    			}
+    			else
+    			{
+    				SDL_RenderCopy(renderer, menuBut, NULL, &menuPos);
+    			}
 
-				if(playOver)
-				{
-					SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
+    			if(playOver)
+    			{
+    				SDL_RenderCopy(renderer, PlaySoff, NULL, &PlaySoffPos);
 
-				}
-				else
-				{
-					SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
-				}
+    			}
+    			else
+    			{
+    				SDL_RenderCopy(renderer, PlayS, NULL, &PlaySPos);
+    			}
 
-				SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
+    			SDL_RenderCopy(renderer, cursor, NULL, &cursorPos);
 
-				//SDL Render present
-				SDL_RenderPresent(renderer);
+    			//SDL Render present
+    			SDL_RenderPresent(renderer);
     		}
     		break; //end lose case
     	}

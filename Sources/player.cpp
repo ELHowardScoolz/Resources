@@ -1,8 +1,8 @@
 #include "Player.h"
 
 const int JOYSTICK_DEAD_ZONE = 8000;
-SDL_Color colorP1  = {0, 255, 0, 255};
-SDL_Color colorP2  = {0, 0, 225, 255};
+SDL_Color colorP1  = {255, 0, 0, 255};
+SDL_Color colorP2  = {0, 0, 225, 0};
 
 Player::Player(SDL_Renderer *renderer, int pNum, string filePath, string audioPath, float x, float y)
 {
