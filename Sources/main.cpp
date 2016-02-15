@@ -618,12 +618,12 @@ srand(time(NULL));
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
-//    Mix_Music *bgm = Mix_LoadMUS((audio_dir + "background.mp3").c_str());
-//
-//    if(!Mix_PlayingMusic())
-//    {
-//    	Mix_PlayMusic(bgm, -1);
-//    }
+    Mix_Music *bgm = Mix_LoadMUS((audio_dir + "background.mp3").c_str());
+
+    if(!Mix_PlayingMusic())
+    {
+    	Mix_PlayMusic(bgm, -1);
+    }
 
     Mix_Chunk *overSound = Mix_LoadWAV((audio_dir + "/over.wav").c_str());
     Mix_Chunk *pressedSound = Mix_LoadWAV((audio_dir + "/pressed.wav").c_str());

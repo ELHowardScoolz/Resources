@@ -1,4 +1,4 @@
-#if defined (_WIN32_) || (_WIN64_)
+#if defined (_WIN32) || (_WIN64)
 	#include <SDL.h>
 	#include <SDL_image.h>
 #endif
@@ -16,8 +16,6 @@
 #include <string>
 #include <iostream>
 using namespace std;
-
-#include <stdlib.h>
 
 class Enemy
 {
