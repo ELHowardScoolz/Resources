@@ -618,7 +618,7 @@ srand(time(NULL));
 
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
 
-    Mix_Music *bgm = Mix_LoadMUS((audio_dir + "background.mp3").c_str());
+    Mix_Music *bgm = Mix_LoadMUS((audio_dir + "/background.mp3").c_str());
 
     if(!Mix_PlayingMusic())
     {
