@@ -676,7 +676,6 @@ srand(time(NULL));
     				{
     				case SDL_CONTROLLERBUTTONDOWN:
     					if (event.cdevice.which == 0)
-
     					{
     						if(event.cbutton.button == SDL_CONTROLLER_BUTTON_A)
     						{
